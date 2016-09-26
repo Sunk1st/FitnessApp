@@ -2,32 +2,40 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 from .forms import RegisterForm, LoginForm
+from django.core.exceptions import ValidationError
 # Create your views here.
 def index(request):
-    regform = RegisterForm()
-    logform = LoginForm()
+    rform = RegisterForm()
+    lform = LoginForm()
     context = {
-        'registerform' : regform,
-        'loginform' : logform
+        'registerform' : rform,
+        'loginform' : lform
     }
     return render(request, 'login_reg_app/index.html', context)
 
 def register(request):
-    fform = RegisterForm()
+    rform = RegisterForm()
+    lform = LoginForm()
 
-    if request.methods == 'POST':
+    if request.method == 'POST':
         doneform = RegisterForm(request.POST)
+        doneform.is_valid()
+        try:
+            doneform.clean_password2()
+        except ValidationError:
+            pass
 
-        print doneform.is_valid()
-        print doneform.errors
-        return render(request, 'login_reg_app/index.html', doneform.errors)
+        context = {
+            'registerform' : rform,
+            'loginform' : lform,
+            'errors' : doneform.errors
+        }
+        return render(request, 'login_reg_app/index.html', context)
 
 def login(request):
     fform = LoginForm()
 
-    if request.methods == 'POST':
+    if request.method == 'POST':
         doneform = LoginForm(request.POST)
 
-        print doneform.is_valid()
-        print doneform.errors
         return render(request, 'login_reg_app/index.html', doneform.errors)

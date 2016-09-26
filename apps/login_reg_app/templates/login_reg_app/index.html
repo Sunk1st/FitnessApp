@@ -17,7 +17,7 @@
     <h2>Register</h2>
     <form action="{% url 'login_app:register' %}" method='post'>
       {% csrf_token %}
-      {{registerform}}
+      {{registerform.as_p}}
       <input type="submit" value="Register">
     </form>
     <h2>Login</h2>
@@ -26,5 +26,6 @@
       {{loginform.as_p}}
       <input type="submit" value="Login">
     </form>
+    {{errors}}
   </body>
 </html>
