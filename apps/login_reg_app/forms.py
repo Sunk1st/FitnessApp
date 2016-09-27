@@ -12,7 +12,7 @@ class RegisterForm(forms.ModelForm):
 	feet = forms.ChoiceField(choices=[(x, x) for x in range(1,11)])
 	inches = forms.ChoiceField(choices=[(x, x) for x in range(1, 12)])
 	password = forms.CharField(max_length = 100, widget = forms.PasswordInput)
-	password2 = forms.CharField(max_length = 100, widget = forms.PasswordInput)
+	password2 = forms.CharField(max_length = 100, widget = forms.PasswordInput, label="Confirm Password")
 
 	def clean_password2(self):
 		password1 = self.cleaned_data.get('password')
