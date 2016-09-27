@@ -19,7 +19,7 @@ class User(models.Model):
     email = models.EmailField()
     feet = models.IntegerField()
     inches = models.IntegerField()
-    weight = models.DecimalField(max_digits=3, decimal_places=1)
+    weight = models.DecimalField(max_digits=5, decimal_places=1)
     age = models.IntegerField()
     password = models.CharField(max_length=255)
     password2 = models.CharField(max_length=255)
