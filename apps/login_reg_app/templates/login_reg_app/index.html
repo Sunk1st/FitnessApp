@@ -1,34 +1,27 @@
-{% load staticfiles %}
 <!DOCTYPE html>
 <html>
   <head>
+    {% load staticfiles %}
     <meta charset="utf-8">
     <title>Login Registration</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   </head>
   <body>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+    {% for user in users %}
+    <p>{{user.first_name}}</p>
+    {% endfor %}
     <h2>Register</h2>
     <form action="{% url 'login_app:register' %}" method='post'>
       {% csrf_token %}
-      Name <input type="text" name="name">
-      Username <input type="text" name="username">
-      Password <input type="password" name="password">
-      Confirm PW <input type="password" name="confirm_pw">
+      {{registerform.as_p}}
       <input type="submit" value="Register">
     </form>
     <h2>Login</h2>
     <form action="{% url 'login_app:login' %}" method='post'>
       {% csrf_token %}
-      Username <input type="text" name="username">
-      Password <input type="password" name="password">
+      {{loginform.as_p}}
       <input type="submit" value="Login">
     </form>
+    {{errors}}
   </body>
 </html>

@@ -1,11 +1,9 @@
 from django.conf.urls import url
-from views import index, login, register, success, logout
+from . import views
 
 urlpatterns = [
-    url(r'^$', index, name='index'),
-    url(r'^login$', login, name='login'),
-    url(r'^register$', register, name='register'),
-    url(r'^success$', success, name='success'),
-    url(r'^logout$', logout, name='logout'),
+    url(r'^$', views.index, name='index'),
+    url(r'^register$', views.register, name='register'),
+    url(r'^login$', views.login, name='login')
 ]
  

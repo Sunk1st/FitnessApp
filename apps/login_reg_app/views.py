@@ -1,54 +1,62 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
-from models import User
-# Create your views here.
+from .forms import RegisterForm, LoginForm
+from django.core.exceptions import ValidationError
+from .models import User
+import bcrypt
+
 def index(request):
-    return render(request, 'login_app/index.html')
-
-def login(request):
-    result = User.objects.validateLogin(request)
-    request.session['username'] = request.POST['username']
-
-    if result[0] == False:
-        print_messages(request, result[1])
-        return redirect(reverse('login_app:index'))
-
-    return log_user_in(request, result[1])
+    rform = RegisterForm()
+    lform = LoginForm()
+    context = {
+        'registerform' : rform,
+        'loginform' : lform
+    }
+    print User.objects.all()
+    return render(request, 'login_reg_app/index.html', context)
 
 def register(request):
-    result = User.objects.validateReg(request)
+    rform = RegisterForm()
+    lform = LoginForm()
 
-    if result[0] == False:
-        print_messages(request, result[1])
-        return redirect(reverse('login_app:index'))
+    if request.method == 'POST':
+        doneform = RegisterForm(request.POST)
+        doneform.is_valid()
+        try:
+            doneform.clean_password2()
+            newpass = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
+            User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email=request.POST['email'], feet=request.POST['feet'], inches=request.POST['inches'], weight=request.POST['weight'], age=request.POST['age'], password=newpass)
+            request.session['user']=request.POST['email']
+            context = {
+                'user' : User.objects.all()
+            }
+            return render(request, 'login_reg_app/index.html', context)
+        except ValidationError:
+            context = {
+                'registerform' : rform,
+                'loginform' : lform,
+                'errors' : doneform.errors
+            }
+            return render(request, 'login_reg_app/index.html', context)
 
-    return log_user_in(request, result[1])
+def login(request):
+    fform = LoginForm()
 
-def success(request):
-    if not 'user' in request.session:
-        return redirect(reverse('login_app:index'))
-    context= {
-        'user': request.session['user']
-
-    }
-    return render(request, 'python_belt_app/index.html', context)
-
-def print_messages(request, message_list):
-    for message in message_list:
-        messages.add_message(request, messages.INFO, message)
-
-def log_user_in(request, user):
-    request.session['user'] = {
-        'id' : user.name,
-        'name' : user.name,
-        'username' : user.username
-    }
-    request.session['name'] = user.name
-    return redirect(reverse('login_app:success'))
-
-def logout(request):
-    request.session.pop('user')
-    del request.session['name']
-    del request.session['username']
-    return redirect(reverse('login_app:index'))
+    if request.method == 'POST':
+        doneform = LoginForm(request.POST)
+        doneform.is_valid()
+        try:
+            doneform.checkMatch()
+            request.session['user']=request.POST['email']
+            context = {
+                'users' : User.objects.all()
+            }
+            return render(request, 'login_reg_app/index.html', context)
+        except ValidationError:
+            context = {
+                'registerform' : rform,
+                'loginform' : lform,
+                'errors' : doneform.errors
+            }
+            return render(request, 'login_reg_app/index.html', doneform.errors)
