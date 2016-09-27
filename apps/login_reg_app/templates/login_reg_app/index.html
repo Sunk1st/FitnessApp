@@ -8,7 +8,7 @@
   </head>
   <body>
     {% for user in users %}
-    <p>{{user.first_name}}</p>
+    <p>{{user.email}}</p>
     {% endfor %}
     <h2>Register</h2>
     <form action="{% url 'login_app:register' %}" method='post'>

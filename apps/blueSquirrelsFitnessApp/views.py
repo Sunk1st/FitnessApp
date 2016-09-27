@@ -22,12 +22,14 @@ def analysis(request):
 	context = {
 		'user' : User.objects.get(email=request.session['user'])
 	}
-	return render(request, 'blueSquirrelsFitnessApp/analysis.html')
+	return render(request, 'blueSquirrelsFitnessApp/bootstrap/analysis.html', context)
 
 def community(request):
 	context = {
-		'user' : User.objects.get(email=request.session['user'])
+		'user' : User.objects.get(email=request.session['user']),
+		'users' : User.objects.all().exclude(email=request.session['user'])
 	}
+	return render(request, 'blueSquirrelsFitnessApp/bootstrap/community.html')
 
 def quickweight(request):
 	instance = User.objects.get(email=request.session['user'])

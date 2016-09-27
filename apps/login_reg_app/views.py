@@ -11,7 +11,8 @@ def index(request):
     lform = LoginForm()
     context = {
         'registerform' : rform,
-        'loginform' : lform
+        'loginform' : lform,
+        'users' : User.objects.all()
     }
     print User.objects.all()
     return render(request, 'login_reg_app/index.html', context)
@@ -39,12 +40,14 @@ def register(request):
             context = {
                 'registerform' : rform,
                 'loginform' : lform,
-                'errors' : doneform.errors
+                'errors' : doneform.errors,
+                'users' : User.objects.all()
             }
             return render(request, 'login_reg_app/index.html', context)
 
 def login(request):
-    fform = LoginForm()
+    lform = LoginForm()
+    rform = RegisterForm()
 
     if request.method == 'POST':
         doneform = LoginForm(request.POST)
@@ -62,7 +65,7 @@ def login(request):
                 'loginform' : lform,
                 'errors' : doneform.errors
             }
-            return render(request, 'login_reg_app/index.html', doneform.errors)
+            return render(request, 'login_reg_app/index.html', context)
 
 def logout(request):
     request.session.flush()

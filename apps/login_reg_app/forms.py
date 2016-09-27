@@ -3,6 +3,7 @@ from .models import User
 from django.core.exceptions import ValidationError
 import bcrypt
 
+
 class RegisterForm(forms.ModelForm):
 	class Meta:
 		model = User
@@ -33,11 +34,10 @@ class LoginForm(forms.Form):
 	def checkMatch(self):
 		email = self.cleaned_data.get('email')
 		password = self.cleaned_data.get('password')
-
-		try:
-			user = User.objects.get(email=email)
-			password = password.encode()
-			if not bcrypt.hashpw(password, user.password.encode()):
-				raise ValidationError('Incorrect password!')
-		except ObjectDoesNotExist:
+		if not User.objects.get(email=email):
 			raise ValidationError('Email not found!')
+		user = User.objects.get(email=email)
+		password = password.encode()
+		userpassword = user.password.encode()
+		if not bcrypt.hashpw(password, userpassword):
+			raise ValidationError('Incorrect password!')
