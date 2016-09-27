@@ -19,18 +19,18 @@
             <a class="navbar-brand" href="#">The Black Squirrels Fitness Community
           </div>
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">HOME</a></li>
-            <li><a href="#">HOME</a></li>
-            <li><a href="#">LIFESTYLE</a></li>
-            <li><a href="#">ANALYSIS</a></li>
-            <li><a href="#">COMMUNITY</a></li>
-            <li><a href="#">LOG OUT</a></li>
+            <li class="active"><a href="{% url 'fitness_app:index' %}">HOME</a></li>
+            <li><a href="{% url 'fitness_app:index' %}">HOME</a></li>
+            <li><a href="{% url 'fitness_app:lifestyle' %}">LIFESTYLE</a></li>
+            <li><a href="{% url 'fitness_app:analysis' %}">ANALYSIS</a></li>
+            <li><a href="{% url 'fitness_app:community' %}">COMMUNITY</a></li>
+            <li><a href="{% url 'login_app:logout' %}">LOG OUT</a></li>
           </ul>
         </div>
       </nav>
     </div>
     <div class = "row">
-      <h2>Welcome User541!</h2>
+      <h2>Welcome, {{user.first_name}}!</h2>
     </div>
     <div class="row">
       <div class=".col-md-6">
@@ -58,13 +58,18 @@
     </div>
     <div class="row">  
       <form action="" name="add_food" method="post">
-        <h3>Quick Add Food  <input type="text" name="add_food"><input type="submit" value="submit"></h3>
+        {{quickfood}}
+        <input type="submit" value="submit"></h3>
       </form>
     </div>
     <div class="row">
-      <form>
-        <h3>Quick Add Weight <input type="text" name="add_weight"><input type="submit" value="submit"></h3>
+      <form action="{% url 'fitness_app:quickweight' %}" method="post">
+        {% csrf_token %}
+        {{quickweight}}
+        <input type="submit" value="submit"></h3>
       </form>
+      <h3>Weight: {{user.weight}}</h3>
+      <h3>{{errors}}</h3>
     </div>
   </div>
 </body>

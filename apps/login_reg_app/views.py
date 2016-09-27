@@ -11,7 +11,8 @@ def index(request):
     lform = LoginForm()
     context = {
         'registerform' : rform,
-        'loginform' : lform
+        'loginform' : lform,
+        'users' : User.objects.all()
     }
     print User.objects.all()
     return render(request, 'login_reg_app/index.html', context)
@@ -26,22 +27,27 @@ def register(request):
         try:
             doneform.clean_password2()
             newpass = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
-            User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email=request.POST['email'], feet=request.POST['feet'], inches=request.POST['inches'], weight=request.POST['weight'], age=request.POST['age'], password=newpass)
+            instance = doneform.save(commit=False)
+            instance.save()
+            print instance.age
+            # User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email=request.POST['email'], feet=request.POST['feet'], inches=request.POST['inches'], weight=request.POST['weight'], age=request.POST['age'], password=newpass)
             request.session['user']=request.POST['email']
             context = {
-                'user' : User.objects.all()
+                'users' : User.objects.all()
             }
-            return render(request, 'login_reg_app/index.html', context)
+            return redirect(reverse('fitness_app:index'))
         except ValidationError:
             context = {
                 'registerform' : rform,
                 'loginform' : lform,
-                'errors' : doneform.errors
+                'errors' : doneform.errors,
+                'users' : User.objects.all()
             }
             return render(request, 'login_reg_app/index.html', context)
 
 def login(request):
-    fform = LoginForm()
+    lform = LoginForm()
+    rform = RegisterForm()
 
     if request.method == 'POST':
         doneform = LoginForm(request.POST)
@@ -52,11 +58,15 @@ def login(request):
             context = {
                 'users' : User.objects.all()
             }
-            return render(request, 'login_reg_app/index.html', context)
+            return redirect(reverse('fitness_app:index'))
         except ValidationError:
             context = {
                 'registerform' : rform,
                 'loginform' : lform,
                 'errors' : doneform.errors
             }
-            return render(request, 'login_reg_app/index.html', doneform.errors)
+            return render(request, 'login_reg_app/index.html', context)
+
+def logout(request):
+    request.session.flush()
+    return redirect(reverse('login_app:index'))

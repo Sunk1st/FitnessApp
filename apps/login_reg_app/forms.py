@@ -3,14 +3,17 @@ from .models import User
 from django.core.exceptions import ValidationError
 import bcrypt
 
+
 class RegisterForm(forms.ModelForm):
 	class Meta:
 		model = User
-		fields = ('first_name', 'last_name', 'email', 'password', 'password2')
+		fields = ('first_name', 'last_name', 'email', 'password', 'password2', 'age', 'gender', 'weight', 'feet', 'inches', 'activity_level')
 	age = forms.ChoiceField(choices=[(x, x) for x in range(1, 100)])
 	weight = forms.ChoiceField(choices=[(x, x) for x in range(50, 501)])
 	feet = forms.ChoiceField(choices=[(x, x) for x in range(1,11)])
 	inches = forms.ChoiceField(choices=[(x, x) for x in range(1, 12)])
+	gender = forms.ChoiceField(widget=forms.Select, choices=(('1', 'Male'), ('2', 'Female')))
+	activity_level = forms.ChoiceField(widget=forms.Select, choices=(('1', 'Sedentary'), ('2', 'Low'), ('3', 'Medium'), ('4', 'High')))
 	password = forms.CharField(max_length = 100, widget = forms.PasswordInput)
 	password2 = forms.CharField(max_length = 100, widget = forms.PasswordInput, label="Confirm Password")
 
@@ -31,11 +34,10 @@ class LoginForm(forms.Form):
 	def checkMatch(self):
 		email = self.cleaned_data.get('email')
 		password = self.cleaned_data.get('password')
-
-		try:
-			user = User.objects.get(email=email)
-			password = password.encode()
-			if not bcrypt.hashpw(password, user.password.encode()):
-				raise ValidationError('Incorrect password!')
-		except ObjectDoesNotExist:
+		if not User.objects.get(email=email):
 			raise ValidationError('Email not found!')
+		user = User.objects.get(email=email)
+		password = password.encode()
+		userpassword = user.password.encode()
+		if not bcrypt.hashpw(password, userpassword):
+			raise ValidationError('Incorrect password!')
