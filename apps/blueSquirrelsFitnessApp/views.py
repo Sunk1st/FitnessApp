@@ -2,19 +2,22 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 from ..login_reg_app.models import User
-from .forms import QuickWeight
+from .forms import QuickWeight, QuickFood
 
 def index(request):
-	qwform = QuickWeight()
+	
 	context = {
-		'user' : User.objects.get(email=request.session['user']),
-		'quickweight' : qwform
+		'user' : User.objects.get(email=request.session['user'])
 	}
 	return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
 
 def lifestyle(request):
+	qwform = QuickWeight()
+	qform = QuickFood()
 	context = {
-		'user' : User.objects.get(email=request.session['user'])
+		'user' : User.objects.get(email=request.session['user']),
+		'quickweight' : qwform,
+		'quickfood' : qform
 	}
 	return render(request, 'blueSquirrelsFitnessApp/bootstrap/lifestyle.html')
 

@@ -18,12 +18,12 @@
 	            <a class="navbar-brand" href="#">The Black Squirrels Fitness Community
 	          </div>
 	          <ul class="nav navbar-nav">
-	            <li class="active"><a href="">COMMUNITY</a></li>
-	            <li><a href="index.html">HOME</a></li>
-	            <li><a href="lifestyle.html">LIFESTYLE</a></li>
-	            <li><a href="analysis.html">ANALYSIS</a></li>
-	            <li><a href="community.html">COMMUNITY</a></li>
-	            <li><a href="#">LOG OUT</a></li>
+	            <li class="active"><a href="{% url 'fitness_app:community' %}">COMMUNITY</a></li>
+	            <li><a href="{% url 'fitness_app:index' %}">HOME</a></li>
+	            <li><a href="{% url 'fitness_app:lifestyle' %}">LIFESTYLE</a></li>
+	            <li><a href="{% url 'fitness_app:analysis' %}">ANALYSIS</a></li>
+	            <li><a href="{% url 'fitness_app:community' %}">COMMUNITY</a></li>
+	            <li><a href="{% url 'login_app:logout' %}">LOG OUT</a></li>
 	          </ul>
 	        </div>
 	      </nav>
