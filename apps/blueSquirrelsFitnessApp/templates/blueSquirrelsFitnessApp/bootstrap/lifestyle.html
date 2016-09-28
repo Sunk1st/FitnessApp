@@ -1,16 +1,34 @@
+{% load staticfiles %}
 <html>
 <head>
 	  <title>Lifestyle Page</title>
   <meta charset="utf-8">
-
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-   <link rel="stylesheet" type="text/css" href="css/style.css">
+   <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+   <script type="text/javascript">
+   		$(document).ready(function() {
+   			$(document).on('click', function (){
+	   			$('#btnGetFood').click(function(){
+	   				// var requestData = $('#txtFood').val()
+	   				var resultElement = $('#resultDiv');
+	   				$.ajax({
+	   					url: 'https://nutritionix-api.p.mashape.com/v1_1/search/' + $('#txtFood').val() + '?fields=item_name%2Cnf_calories%2Cnf_total_fat%2Cnf_protein%2Cnf_trans_fatty_acid%2Cnf_sugars%2Cnf_servings_per_container%2Cnf_total_carbohydrate',
+	   					method: 'get',
+	   					// data: {fields:requestData},	
+	   					dataType: 'json',
+	   					headers: { "X-Mashape-Key": "ZQdVejWpzXmshdaZtQfKzwtGzxytp1rSizcjsnb1bGwELdPAIB" },
+	   					success: function (data){
+	   						console.log(data.hits[0].fields);
+	   						resultElement.html('Food: ' + data.hits[0].fields.item_name + 'Serving Size: ' + data.hits[0].fields.nf_serving_size_qty + '\n' + 'Calories: ' + data.hits[0].fields.nf_calories + '\n' + 'Carbs: ' + data.hits[0].fields.nf_total_carbohydrate + 'Fats: ' + data.hits[0].fields.nf_total_fat + 'Protein: ' + data.hits[0].fields.nf_protein + 'Sugars: ' + data.hits[0].fields.nf_sugars);
+	   					}
+	   				});
+	   			});
+	   		});
+   		});
+   </script>
 </head>
 <body>
 	<div class="container">
@@ -57,7 +75,7 @@
 		    </div>
 	    </div>
 	    <div class="row">  
-	      <form action="" name="add_food" method="post">
+	      <form id="food" action="" name="add_food" method="post">
 	        {{quickfood}}
 	        <input type="submit" value="submit"></h3>
 	      </form>
@@ -71,6 +89,19 @@
 	      <h3>Weight: {{user.weight}}</h3>
 	      <h3>{{errors}}</h3>
 	    </div>
+		<div id="row">
+			<table>
+				<tr>
+					<td>Food</td>
+					<td><input type="text" id="txtFood"></td>
+				</tr>
+			</table>
+			<input type="button" id="btnGetFood" value="Get Food Data">
+				<div id="resultDiv">
+
+				</div>
+		</div>
 	</div>
+
 </body>
 </html>

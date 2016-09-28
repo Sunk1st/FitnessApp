@@ -7,8 +7,7 @@ import bcrypt
 class QuickFood(forms.ModelForm):
 	class Meta:
 		model = Food
-		fields = ('food_id',)
-	food = forms.CharField(max_length=100)
+		fields = ('food',)
 
 
 class QuickWeight(forms.ModelForm):
