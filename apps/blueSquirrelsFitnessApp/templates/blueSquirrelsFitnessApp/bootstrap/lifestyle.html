@@ -111,11 +111,11 @@
 				    		<form action="" method="post">
 				    			{% csrf_token %}
 
-					    		<td><input type="radio" name="goal" value="Lose2"></td>
-					      		<td><input type="radio" name="goal" value="Lose1">1500 Calories</td>
-					      		<td><input type="radio" name="goal" value="maintain">1800 Calories</td>
-					      		<td><input type="radio" name="goal" value="gain1">2100 Calories</td>
-					      		<td><input type="radio" name="goal" value="gain2">2400 Calories</td>
+					    		<td><input type="radio" name="goal" value="Lose2">{{loseTwo}}</td>
+					      		<td><input type="radio" name="goal" value="Lose1">{{loseOne}}</td>
+					      		<td><input type="radio" name="goal" value="maintain">{{maintain}}</td>
+					      		<td><input type="radio" name="goal" value="gain1">{{gainOne}}</td>
+					      		<td><input type="radio" name="goal" value="gain2">{{gainTwo}}</td>
 				    		</form>
 						</tr>
 				  	</tbody>
