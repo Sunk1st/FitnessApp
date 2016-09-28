@@ -12,7 +12,7 @@ class RegisterForm(forms.ModelForm):
 	weight = forms.ChoiceField(choices=[(x, x) for x in range(50, 501)])
 	feet = forms.ChoiceField(choices=[(x, x) for x in range(1,11)])
 	inches = forms.ChoiceField(choices=[(x, x) for x in range(1, 12)])
-	gender = forms.ChoiceField(widget=forms.Select, choices=(('1', 'Male'), ('2', 'Female')))
+	gender = forms.ChoiceField(widget=forms.Select, choices=(('Male', 'Male'), ('Female', 'Female')))
 	activity_level = forms.ChoiceField(widget=forms.Select, choices=(('1', 'Sedentary'), ('2', 'Low'), ('3', 'Medium'), ('4', 'High')))
 	password = forms.CharField(max_length = 100, widget = forms.PasswordInput)
 	password2 = forms.CharField(max_length = 100, widget = forms.PasswordInput, label="Confirm Password")
