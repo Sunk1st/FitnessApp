@@ -7,6 +7,22 @@
   
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script>
+
+    $(document).ready(function() {
+        $('#food').submit(function(e){
+            $.ajax({
+                url: 'https://api.nutritionix.com/v1_1/search/cheddar%20cheese?fields=item_name%2Citem_id%2Cbrand_name%2Cnf_calories%2Cnf_total_fat&appId=sbraaten95&appKey=c59839455b9f214b9c4e559228646cc5',
+                method: 'get',
+                success: function(serverResponse){
+                    console.log("Received this from server: ", serverResponse)
+                    console.log("I should probably put that in the DOM...")
+                }
+            }, "json");
+        })
+    })
+
+  </script>
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
@@ -57,7 +73,8 @@
       </div>
     </div>
     <div class="row">  
-      <form action="" name="add_food" method="post">
+      <form id="food" action="" method="get">
+        {% csrf_token %}
         {{quickfood}}
         <input type="submit" value="submit"></h3>
       </form>
