@@ -1,60 +1,62 @@
 <html>
 <head>
-  <title>Community Page</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  	<title>Community Page</title>
+  	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="css/style.css">
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  	<link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 	<div class="container">
 		<div class="row">
-	      <nav class="navbar navbar-inverse">
-	        <div class="container-fluid">
-	          <div class="navbar-header">
-	            <a class="navbar-brand" href="#">The Black Squirrels Fitness Community
-	          </div>
-	          <ul class="nav navbar-nav">
-	            <li class="active"><a href="{% url 'fitness_app:community' %}">COMMUNITY</a></li>
-	            <li><a href="{% url 'fitness_app:index' %}">HOME</a></li>
-	            <li><a href="{% url 'fitness_app:lifestyle' %}">LIFESTYLE</a></li>
-	            <li><a href="{% url 'fitness_app:analysis' %}">ANALYSIS</a></li>
-	            <li><a href="{% url 'fitness_app:community' %}">COMMUNITY</a></li>
-	            <li><a href="{% url 'login_app:logout' %}">LOG OUT</a></li>
-	          </ul>
-	        </div>
-	      </nav>
+	      	<nav class="navbar navbar-inverse">
+	        	<div class="container-fluid">
+	          		<div class="navbar-header">
+	            		<a class="navbar-brand" href="#">The Black Squirrels Fitness Community</a>
+	          		</div>
+	          		<ul class="nav navbar-nav">
+			            <li class="active"><a href="{% url 'fitness_app:community' %}">COMMUNITY</a></li>
+			            <li><a href="{% url 'fitness_app:index' %}">HOME</a></li>
+			            <li><a href="{% url 'fitness_app:lifestyle' %}">LIFESTYLE</a></li>
+			            <li><a href="{% url 'fitness_app:analysis' %}">ANALYSIS</a></li>
+			            <li><a href="{% url 'fitness_app:community' %}">COMMUNITY</a></li>
+			            <li><a href="{% url 'login_app:logout' %}">LOG OUT</a></li>
+	          		</ul>
+	        	</div>
+	      	</nav>
 	    </div>
 	    <div class="row">
 	    	<h3>COMMUNITY</h3>
 	    </div>
 	    <div class="row">
 	    	<table class="table table-inverse">
-			  <thead>
-			    <tr>
-			      <th>#</th>
-			      <th>FIRST NAME</th>
-			      <th>LAST NAME</th>
-			      <th>FOOD</th>
-			      <th>CALORIES</th>
-			      <th>PROTEIN (g)</th>
-			      <th>TIME</th>
-			    </tr>
-			  </thead>
-			  <tbody>
-			    <tr>
-			      <th scope="row">1</th>
-				      <td>John</td>
-				      <td>Smith</td>
-				      <td>Apple</td>
-				      <td>70</td>
-				      <td>3</td>
-				      <td>9:59 AM November 5, 2016</td>
-			    </tr>
-			  </tbody>
+			  	<thead>
+			    	<tr>
+			      		<th>#</th>
+					    <th>FIRST NAME</th>
+					    <th>LAST NAME</th>
+					    <th>FOOD</th>
+					    <th>CALORIES</th>
+					    <th>PROTEIN (g)</th>
+					    <th>TIME</th>
+			    	</tr>
+			  	</thead>
+			  	<tbody>
+			  		{% for food in eaten %}
+			    	<tr>
+			      		<th scope="row">1</th>
+				      	<td>{{food.user.first_name}}</td>
+				      	<td>{{user.last_name}}</td>
+				      	<td>{{Apple}}</td>
+				      	<td>70</td>
+				      	<td>3</td>
+				      	<td>9:59 AM November 5, 2016</td>
+			    	</tr>
+			    	{% endfor %}
+			  	</tbody>
 			</table>
 	    </div>
     </div>

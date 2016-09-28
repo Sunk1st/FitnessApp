@@ -6,5 +6,7 @@ urlpatterns = [
     url(r'^lifestyle$', views.lifestyle, name='lifestyle'),
     url(r'^analysis$', views.analysis, name='analysis'),
     url(r'^community$', views.community, name='community'),
-    url(r'^quickweight$', views.quickweight, name='quickweight')
+    url(r'^quickweight$', views.quickweight, name='quickweight'),
+    url(r'^addfood$', views.addfood, name='addfood'),
+    url(r'^getfood$', views.getfood, name='getfood')
 ]

@@ -34,11 +34,15 @@ class LoginForm(forms.Form):
 	def checkMatch(self):
 		email = self.cleaned_data.get('email')
 		password = self.cleaned_data.get('password')
-		print User.objects.get(email=email).password
-		if not User.objects.get(email=email):
+		try:
+			User.objects.get(email=email)
+		except User.DoesNotExist:
 			raise ValidationError('Email not found!')
 		user = User.objects.get(email=email)
 		password = password.encode()
+		print user.password
 		userpassword = user.password.encode()
-		if not bcrypt.hashpw(password, userpassword):
+		print bcrypt.hashpw(password, userpassword)
+		print bcrypt.hashpw(b'password', userpassword)
+		if bcrypt.hashpw(password, userpassword) != user.password:
 			raise ValidationError('Incorrect password!')

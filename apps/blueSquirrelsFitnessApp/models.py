@@ -3,6 +3,12 @@ from ..login_reg_app.models import User
 from django.db import models
 
 class Food(models.Model):
-	food = models.IntegerField()
+	food = models.CharField(max_length=255)
+	calories = models.DecimalField(max_digits=7, decimal_places=2)
+	carbohydrates = models.DecimalField(max_digits=7, decimal_places=2)
+	lipids = models.DecimalField(max_digits=7, decimal_places=2)
+	protein = models.DecimalField(max_digits=7, decimal_places=2)
+	sugar = models.DecimalField(max_digits=5, decimal_places=2)
+	user = models.ForeignKey(User)
 	created_at = models.DateField(auto_now_add=True)
 	updated_at = models.DateField(auto_now=True)

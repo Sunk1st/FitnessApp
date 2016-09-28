@@ -27,7 +27,6 @@ def register(request):
             doneform.clean_password2()
             instance = doneform.save(commit=False)
             instance.password = bcrypt.hashpw(instance.password.encode(), bcrypt.gensalt())
-            print instance.password
             instance.save()
             request.session['user']=request.POST['email']
             context = {
@@ -57,12 +56,11 @@ def login(request):
                 'users' : User.objects.all()
             }
             return redirect(reverse('fitness_app:index'))
-        except ValidationError:
+        except ValidationError, err:
             context = {
                 'registerform' : rform,
                 'loginform' : lform,
-                'errors' : doneform.errors,
-                'user' : User.objects.get(email = request.session['user'])
+                'errors' : err[0]
             }
             return render(request, 'login_reg_app/index.html', context)
 

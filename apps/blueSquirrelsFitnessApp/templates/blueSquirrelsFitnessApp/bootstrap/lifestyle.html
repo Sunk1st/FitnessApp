@@ -1,14 +1,14 @@
 {% load staticfiles %}
 <html>
 <head>
-	  <title>Lifestyle Page</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-   <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
-   <script type="text/javascript">
+	<title>Lifestyle Page</title>
+  	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+   	<script type="text/javascript">
    		$(document).ready(function() {
    			$(document).on('click', function (){
 	   			$('#btnGetFood').click(function(){
@@ -26,7 +26,6 @@
 	   					dataType: 'json',
 	   					headers: { "X-Mashape-Key": "ZQdVejWpzXmshdaZtQfKzwtGzxytp1rSizcjsnb1bGwELdPAIB" },
 	   					success: function (data){
-	   						console.log(data.hits[0].fields);
 	   						food_name.html(data.hits[0].fields.item_name);
 	   						serving_size.html(data.hits[0].fields.nf_serving_size_qty);
 	   						calories.html(data.hits[0].fields.nf_calories);
@@ -39,7 +38,7 @@
 	   			});
 	   		});
    		});
-   </script>
+   	</script>
 </head>
 <body>
 	<div class="container">
@@ -103,34 +102,39 @@
 	    <div id="row">
 	    	<div class="col-md-2">
 				<h4>Enter a Food Item</h4>
-				<input type="text" id="txtFood">
-				<input type="button" id="btnGetFood" value="Get Food Data">
-					<div id="resultDiv"></div>
+
+
+					<input type="text" id="txtFood" name="foodname">
+					<input type="submit" id="btnGetFood" name="test" value="Get Food Data">
+
+				<div id="resultDiv"></div>
 			</div>
 			<div class="col-md-10">
 				<table class="table">
-				  <thead class="thead-inverse">
-				    <tr>
-				      <th>Food</th>
-				      <th>Serving Size</th>
-				      <th>Calories</th>
-				      <th>Carbs</th>
-				      <th>Fats</th>
-				      <th>Protein</th>
-				      <th>Sugars</th>
-				    </tr>
-				  </thead>
-				  <tbody>
-				    <tr>
-				      <th scope="row"><label id="foodnameLabel">Funnel Cake</label></th>
-				      <td><label id="servingsizeLabel">25 Servings</label></td>
-				      <td><label id="caloriesLabel">5000</label></td>
-				      <td><label id="carbsLabel">700 grams</label></td>
-				      <td><label id="fatsLabel">Obesity Level 1000</label></td>
-				      <td><label id="proteinLabel">500 g</label></td>
-				      <td><label id="sugarsLabel">3 LBS</label></td>
-				    </tr>
-				  </tbody>
+					<thead class="thead-inverse">
+						<tr>
+				    		<th>Food</th>
+				    		<th>Serving Size</th>
+				    		<th>Calories</th>
+				    		<th>Carbs</th>
+				    		<th>Fats</th>
+				    		<th>Protein</th>
+				    		<th>Sugars</th>
+				    		<th></th>
+				    	</tr>
+				  	</thead>
+				  	<tbody>
+				  		<tr>
+				      		<th scope="row"><label id="foodnameLabel"><span style="font-style: italic;">Funnel Cake</span></label></th>
+				      		<td id="servingsizeLabel"><span style="font-style: italic;">25 Servings</span></td>
+				      		<td id="caloriesLabel"><span style="font-style: italic;">5000</td>
+				      		<td id="carbsLabel"><span style="font-style: italic;">700 grams</span></td>
+				      		<td id="fatsLabel"><span style="font-style: italic;">Obesity Level 1000</span></td>
+				      		<td id="proteinLabel"><span style="font-style: italic;">500 g</span></td>
+				      		<td id="sugarsLabel"><span style="font-style: italic;">3 LBS</span></td>
+				      		<td><form action="{% url 'fitness_app:addfood' %}"><input type="submit" value="Add"></form></td>
+				    	</tr>
+				  	</tbody>
 				</table>
 			</div>
 		</div>
