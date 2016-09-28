@@ -14,7 +14,6 @@ def index(request):
         'loginform' : lform,
         'users' : User.objects.all()
     }
-    print User.objects.all()
     return render(request, 'login_reg_app/index.html', context)
 
 def register(request):
@@ -26,11 +25,10 @@ def register(request):
         doneform.is_valid()
         try:
             doneform.clean_password2()
-            newpass = bcrypt.hashpw(request.POST['password'].encode(), bcrypt.gensalt())
             instance = doneform.save(commit=False)
+            instance.password = bcrypt.hashpw(instance.password.encode(), bcrypt.gensalt())
+            print instance.password
             instance.save()
-            print instance.age
-            # User.objects.create(first_name=request.POST['first_name'], last_name=request.POST['last_name'], email=request.POST['email'], feet=request.POST['feet'], inches=request.POST['inches'], weight=request.POST['weight'], age=request.POST['age'], password=newpass)
             request.session['user']=request.POST['email']
             context = {
                 'users' : User.objects.all()
@@ -63,7 +61,8 @@ def login(request):
             context = {
                 'registerform' : rform,
                 'loginform' : lform,
-                'errors' : doneform.errors
+                'errors' : doneform.errors,
+                'user' : User.objects.get(email = request.session['user'])
             }
             return render(request, 'login_reg_app/index.html', context)
 

@@ -34,6 +34,7 @@ class LoginForm(forms.Form):
 	def checkMatch(self):
 		email = self.cleaned_data.get('email')
 		password = self.cleaned_data.get('password')
+		print User.objects.get(email=email).password
 		if not User.objects.get(email=email):
 			raise ValidationError('Email not found!')
 		user = User.objects.get(email=email)
