@@ -15,9 +15,29 @@ def index(request):
 
 def lifestyle(request):
 	qwform = QuickWeight()
+	qform = QuickFood()
+	userData = User.objects.get(email=request.session['user'])
+	if (int(userData.gender[0]) == 1):
+		bmr = 66.47 + (13.75 * int(userData.weight)) + (5 * ((userData.feet * 12) + userData.inches) / 2.54) - (6.75 * userData.age)
+	else:
+		bmr = 655.1 + (4.35 * int(userData.weight)) + (4.7 * (userData.feet * 12) + userData.inches) - (4.7 * userData.age)
+
+	sedentary = int(bmr * 1.2)
+	light = int(bmr * 1.375)
+	moderate = int(bmr * 1.55)
+	very = int(bmr * 1.725)
+	extreme = int(bmr * 1.9)
+	
 	context = {
 		'user' : User.objects.get(email=request.session['user']),
-		'quickweight' : qwform
+		'quickweight' : qwform,
+		'quickfood' : qform,
+		'bmr' : bmr,
+		'sedentary' : sedentary,
+		'light' : light,
+		'moderate' : moderate,
+		'very' : very,
+		'extreme' : extreme
 	}
 	return render(request, 'blueSquirrelsFitnessApp/bootstrap/lifestyle.html', context)
 
