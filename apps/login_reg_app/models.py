@@ -18,7 +18,7 @@ class User(models.Model):
     last_name = models.CharField(max_length=255, validators = [validateName])
     email = models.EmailField()
     age = models.IntegerField()
-    gender = models.CharField(max_length=1)
+    gender = models.CharField(max_length=10)
     feet = models.IntegerField()
     inches = models.IntegerField()
     weight = models.DecimalField(max_digits=5, decimal_places=1)
