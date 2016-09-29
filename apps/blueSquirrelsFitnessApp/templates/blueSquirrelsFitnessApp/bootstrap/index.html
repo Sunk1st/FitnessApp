@@ -28,7 +28,7 @@
             </nav>
         </div>
         <div class = "row">
-            <h2>Welcome, {{user.first_name}}!</h2>
+            <h2>Welcome, {{user.created_at}}! Today you should eat {{daily}} calories! You have already eaten {{sofar}}!</h2>
         </div>
         <div class="row">
             <div class=".col-md-6">
@@ -37,7 +37,7 @@
             </div>
             <div class=".col-md-6">
                 <div class="progress">
-                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:70%">
+                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:{{calpercent}}%">
                     </div>
                 </div>
             </div>
@@ -49,7 +49,7 @@
         </div>
         <div class=".col-md-6">
             <div class="progress">
-                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:70%">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:{{protpercent}}%">
                 </div>
             </div>
         </div>
@@ -67,7 +67,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{for }}
                         <tr>
                             <th scope="row">1</th>
                             <td>Apple</td>

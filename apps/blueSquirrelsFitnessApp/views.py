@@ -7,10 +7,33 @@ from .models import Food
 from .forms import QuickWeight, QuickActivity, QuickGoal
 import unirest
 import json
+import datetime
 
 def index(request):
+	user = User.objects.get(email=request.session['user'])
+	if (user.gender == 'Male'):
+		bmr = 66.47 + (6.23 * int(user.weight)) + (12.7 * ((user.feet * 12) + user.inches)) - (6.75 * user.age)
+	elif (user.gender == 'Female'):
+		bmr = 655.1 + (4.35 * int(user.weight)) + (4.7 * (user.feet * 12) + user.inches) - (4.7 * user.age)
+	request.session['dailycal'] = int(float(user.activity_level) * bmr + user.goal)
+
+	eaten = Food.objects.filter(created_at=datetime.datetime.now(), user=user)
+
+	calsofar = 0
+	for food in eaten:
+		calsofar += food.calories
+	calpercent = (calsofar / request.session['dailycal']) * 100
+
+	protsofar = 0
+	for food in eaten:
+		protsofar += food.protein
+	protpercent = (protsofar / request.session['dailycal']) * 100
+	
 	context = {
-		'user' : User.objects.get(email=request.session['user'])
+		'user' : user,
+		'daily' : request.session['dailycal'],
+		'calpercent' : calpercent,
+		'protpercent' : protpercent
 	}
 	return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
 
@@ -19,47 +42,47 @@ def lifestyle(request):
 	qaform = QuickActivity()
 	qgform = QuickGoal()
 	userData = User.objects.get(email=request.session['user'])
-	if (userData.gender == 'Male'):
 
+	if (userData.gender == 'Male'):
 		bmr = 66.47 + (6.23 * int(userData.weight)) + (12.7 * ((userData.feet * 12) + userData.inches)) - (6.75 * userData.age)
 	elif (userData.gender == 'Female'):
 		bmr = 655.1 + (4.35 * int(userData.weight)) + (4.7 * (userData.feet * 12) + userData.inches) - (4.7 * userData.age)
 
-	sedentary = int(bmr * 1.2)
-	light = int(bmr * 1.375)
-	moderate = int(bmr * 1.55)
-	very = int(bmr * 1.725)
-	extreme = int(bmr * 1.9)
+	sedentary = int(bmr * float(userData.activity_level))
+	light = int(bmr * float(userData.activity_level))
+	moderate = int(bmr * float(userData.activity_level))
+	very = int(bmr * float(userData.activity_level))
+	extreme = int(bmr * float(userData.activity_level))
 
-	if (userData.activity_level == 1):
+	if (userData.activity_level == 1.2):
 		loseTwo = sedentary - 1000
 		loseOne = sedentary - 500
 		maintain = sedentary 
 		gainOne = sedentary + 500
 		gainTwo = sedentary + 1000
 
-	elif (userData.activity_level == 2):
+	elif (userData.activity_level ==1.375):
 		loseTwo = light - 1000
 		loseOne = light - 500
 		maintain = light
 		gainOne = light + 500
 		gainTwo = light + 1000
 
-	elif (userData.activity_level == 3):
+	elif (userData.activity_level == 1.55):
 		loseTwo = moderate - 1000
 		loseOne = moderate - 500
 		maintain = moderate
 		gainOne = moderate + 500
 		gainTwo = moderate + 1000
 
-	elif (userData.activity_level == 4):
+	elif (userData.activity_level == 1.725):
 		loseTwo = very - 1000
 		loseOne = very - 500
 		maintain = very
 		gainOne = very + 500
 		gainTwo = very + 1000
 
-	elif (userData.activity_level == 5):
+	elif (userData.activity_level == 1.9):
 		loseTwo = extreme - 1000
 		loseOne = extreme - 500
 		maintain = extreme
