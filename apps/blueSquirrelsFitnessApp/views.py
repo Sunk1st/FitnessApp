@@ -27,12 +27,16 @@ def index(request):
 	protsofar = 0
 	for food in eaten:
 		protsofar += food.protein
-	protpercent = (protsofar / request.session['dailycal']) * 100
+	protpercent = float(protsofar) / (float(user.weight) * 0.6) * 100
 	
 	context = {
 		'user' : user,
+		'userfoods' : Food.objects.filter(user=User.objects.get(email=request.session['user'])),
 		'daily' : request.session['dailycal'],
+		'calsofar' : calsofar,
+		'calleft' : request.session['dailycal'] - calsofar,
 		'calpercent' : calpercent,
+		'protsofar' : protsofar,
 		'protpercent' : protpercent
 	}
 	return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
@@ -48,48 +52,40 @@ def lifestyle(request):
 	elif (userData.gender == 'Female'):
 		bmr = 655.1 + (4.35 * int(userData.weight)) + (4.7 * (userData.feet * 12) + userData.inches) - (4.7 * userData.age)
 
-	sedentary = int(bmr * float(userData.activity_level))
-	light = int(bmr * float(userData.activity_level))
-	moderate = int(bmr * float(userData.activity_level))
-	very = int(bmr * float(userData.activity_level))
-	extreme = int(bmr * float(userData.activity_level))
+	sedentary = int(bmr * 1.2) + userData.goal
+	light = int(bmr * 1.375) + userData.goal
+	moderate = int(bmr * 1.55) + userData.goal
+	very = int(bmr * 1.725) + userData.goal
+	extreme = int(bmr * 1.9) + userData.goal
 
-	if (userData.activity_level == 1.2):
-		loseTwo = sedentary - 1000
-		loseOne = sedentary - 500
-		maintain = sedentary 
-		gainOne = sedentary + 500
-		gainTwo = sedentary + 1000
+	loseTwo = int(bmr * float(userData.activity_level)) - 1000
+	loseOne = int(bmr * float(userData.activity_level)) - 500
+	maintain = int(bmr * float(userData.activity_level))
+	gainOne = int(bmr * float(userData.activity_level)) + 500
+	gainTwo = int(bmr * float(userData.activity_level)) + 1000
 
-	elif (userData.activity_level ==1.375):
-		loseTwo = light - 1000
-		loseOne = light - 500
-		maintain = light
-		gainOne = light + 500
-		gainTwo = light + 1000
+	if float(userData.activity_level) == 1.200:
+		actlvl = 'Sedentary'
+	elif float(userData.activity_level) == 1.375:
+		actlvl = 'Low-Intensity'
+	elif float(userData.activity_level) == 1.550:
+		actlvl = 'Medium-Intensity'
+	elif float(userData.activity_level) == 1.725:
+		actlvl = 'High-Intensity'
+	elif float(userData.activity_level) == 1.900:
+		actlvl = 'Extreme-Intensity'
 
-	elif (userData.activity_level == 1.55):
-		loseTwo = moderate - 1000
-		loseOne = moderate - 500
-		maintain = moderate
-		gainOne = moderate + 500
-		gainTwo = moderate + 1000
+	if float(userData.goal) == -1000:
+		gl = 'Lose 2 Pounds'
+	elif float(userData.goal) == -500:
+		gl = 'Lose 2 Pound'
+	elif float(userData.goal) == 0:
+		gl = 'Maintain Weight'
+	elif float(userData.goal) == 500:
+		gl = 'Gain 1 Pound'
+	elif float(userData.goal) == 1000:
+		gl = 'Gain 2 Pounds'
 
-	elif (userData.activity_level == 1.725):
-		loseTwo = very - 1000
-		loseOne = very - 500
-		maintain = very
-		gainOne = very + 500
-		gainTwo = very + 1000
-
-	elif (userData.activity_level == 1.9):
-		loseTwo = extreme - 1000
-		loseOne = extreme - 500
-		maintain = extreme
-		gainOne = extreme + 500
-		gainTwo = extreme + 1000
-
-	
 	context = {
 		'user' : User.objects.get(email=request.session['user']),
 		'yourfoods' : Food.objects.filter(user=User.objects.get(email=request.session['user'])),
@@ -106,7 +102,9 @@ def lifestyle(request):
 		'loseOne' : loseOne,
 		'maintain' : maintain,
 		'gainOne' : gainOne,
-		'gainTwo' : gainTwo
+		'gainTwo' : gainTwo,
+		'actlvl' : actlvl,
+		'gl' : gl
 	}
 	return render(request, 'blueSquirrelsFitnessApp/bootstrap/lifestyle.html', context)
 
@@ -146,7 +144,7 @@ def addfood(request):
 		"Accept" : "application/json"})
 	fields = response.body['hits'][0]['fields']
 	Food.objects.create(food=fields['item_name'], calories=fields['nf_calories'], carbohydrates=fields['nf_total_carbohydrate'], lipids=fields['nf_total_fat'], protein=fields['nf_protein'], sugar=fields['nf_sugars'], user=User.objects.get(email=request.session['user']))
-	return redirect(reverse('fitness_app:lifestyle'))
+	return redirect(reverse('fitness_app:index'))
 
 def quickactivity(request):
 	instance = User.objects.get(email=request.session['user'])
@@ -160,11 +158,9 @@ def quickactivity(request):
 		}
 		return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
 
-	return redirect(reverse('fitness_app:lifestyle'))
-
 def quickgoal(request):
 	instance = User.objects.get(email=request.session['user'])
-	form = QuickActivity(request.POST, instance=instance)
+	form = QuickGoal(request.POST, instance=instance)
 	if form.is_valid():
 		form.save()
 		return redirect(reverse('fitness_app:lifestyle'))
@@ -173,5 +169,3 @@ def quickgoal(request):
 			'errors' : form.errors
 		}
 		return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
-
-	return redirect(reverse('fitness_app:lifestyle'))

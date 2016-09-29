@@ -13,10 +13,10 @@ class QuickActivity(forms.ModelForm):
 	class Meta:
 		model = User
 		fields = ('activity_level',)
-	activity_level = forms.IntegerField()
+	activity_level = forms.ChoiceField(widget=forms.Select, choices=(('1.2', 'Sedentary'), ('1.375', 'Low-Intensity'), ('1.55', 'Medium-Intensity'), ('1.725', 'High-Intensity'), ('1.9', 'Extreme-Intensity')))
 
 class QuickGoal(forms.ModelForm):
 	class Meta:
 		model = User
 		fields = ('goal',)
-	activity_level = forms.CharField(max_length=255)
+	goal = forms.ChoiceField(widget=forms.Select, choices=(('-1000', 'Lose 2 Pounds'), ('-500', 'Lose 1 Pound'), ('0', 'Maintain'), ('500', 'Gain 1 Pound'), ('1000', 'Gain 2 Pounds')))

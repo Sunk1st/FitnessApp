@@ -1,6 +1,7 @@
-{% load staticfiles %}
+<!DOCTYPE html>
 <html>
 <head>
+	{% load staticfiles %}
 	<title>Lifestyle Page</title>
   	<meta charset="utf-8">
   	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,8 +73,8 @@
   					<dt>Age</dt><dd>{{user.age}}</dd>
   					<dt>Weight</dt><dd>{{user.weight}} lbs</dd>
   					<dt>Gender</dt><dd>{{user.gender}}</dd>
-  					<dt>Activity Level</dt><dd>{{user.activity_level}}</dd>
-  					<dt>Goal</dt><dd>{{user.goal}}</dd>
+  					<dt>Activity Level</dt><dd>{{actlvl}}</dd>
+  					<dt>Goal</dt><dd>{{gl}}</dd>
   					<dt>BMR</dt><dd>{{bmr}}</dd>
 				</dl>
 				<form action="{% url 'fitness_app:quickweight' %}" method="post">
@@ -83,7 +84,7 @@
 	    		</form>
 		    </div>
 		    <div class="col-md-8">
-		    	<h4 class='text-center'>To Maintain Weight at Different Activity Levels</h4>
+		    	<h4 class='text-center'>To {{gl}} at Different Activity Levels</h4>
 	    		<table class="table table-inverse">
 					<thead>
 				    	<tr>
@@ -95,19 +96,18 @@
 				    	</tr>
 					</thead>
 				  	<tbody>
-				  		<tr>
-				  			<form action = "{% url 'fitness_app:quickactivity' %}", method='post'>		
-				    		<td>{{sedentary}} Cal</td>
-				      		<td>{{light}} Cal</td>
-				      		<td>{{moderate}} Cal</td>
-				      		<td>{{very}} Cal</td>
-				      		<td>{{extreme}} Cal</td>
+				  		<tr>		
+				    			<td>{{sedentary}} Cal</td>
+				      			<td>{{light}} Cal</td>
+				      			<td>{{moderate}} Cal</td>
+				      			<td>{{very}} Cal</td>
+				      			<td>{{extreme}} Cal</td>
 						</tr>
 						<tr>
-							
+							<form action = "{% url 'fitness_app:quickactivity' %}", method='post'>
 							{% csrf_token %}	
-							<td>{{quickactivity}}</td>
-							<td><input type='submit' value="Update (1-5)"></td>
+								<td>{{quickactivity}}</td>
+								<td><input type='submit' value="Update (1-5)"></td>
 							</form>
 						</tr>
 				  	</tbody>
@@ -124,66 +124,23 @@
 				    	</tr>
 					</thead>
 				  	<tbody>
-				  		<form action="{% url 'fitness_app:quickgoal' %}" method="post">
-					  		<tr>	
-				    			{% csrf_token %}
-					    		<td>{{loseTwo}} Cal</td>
-					      		<td>{{loseOne}} Cal</td>
-					      		<td>{{maintain}} Cal</td>
-					      		<td>{{gainOne}} Cal</td>
-					      		<td>{{gainTwo}} Cal</td>
-							</tr>
-							<tr>
+				  		<tr>
+				    		<td>{{loseTwo}} Cal</td>
+				      		<td>{{loseOne}} Cal</td>
+				      		<td>{{maintain}} Cal</td>
+				      		<td>{{gainOne}} Cal</td>
+				      		<td>{{gainTwo}} Cal</td>
+						</tr>
+						<tr>
+							<form action="{% url 'fitness_app:quickgoal' %}" method="post">
+								{% csrf_token %}
 								<td>{{quickgoal}}</td>
 								<td><input type='submit' value='Update Goal'></td>
-							</tr>
-						</form>
+							</form>
+						</tr>
 				  	</tbody>
 				</table>
 		    </div>
-	    </div>
-	    <div id="row">
-	    	<div class="col-md-3">
-				<h4>Enter a Food Item</h4>
-				<input type="text" id="txtFood" name="foodname">
-				<input type="submit" id="btnGetFood" name="test" value="Get Food Data">
-			</div>
-			<div class="col-md-9">
-				<table class="table">
-					<thead class="thead-inverse">
-						<tr>
-				    		<th>Food</th>
-				    		<th>Serving Size</th>
-				    		<th>Calories</th>
-				    		<th>Carbs</th>
-				    		<th>Fats</th>
-				    		<th>Protein</th>
-				    		<th>Sugars</th>
-				    		<th></th>
-				    	</tr>
-				  	</thead>
-				  	<tbody>
-				  		<tr>
-				      		<th scope="row"><label id="foodnameLabel"><span style="font-style: italic;">Funnel Cake</span></label></th>
-				      		<td id="servingsizeLabel"><span style="font-style: italic;">25 Servings</span></td>
-				      		<td id="caloriesLabel"><span style="font-style: italic;">5000</td>
-				      		<td id="carbsLabel"><span style="font-style: italic;">700 grams</span></td>
-				      		<td id="fatsLabel"><span style="font-style: italic;">Obesity Level 1000</span></td>
-				      		<td id="proteinLabel"><span style="font-style: italic;">500 g</span></td>
-				      		<td id="sugarsLabel"><span style="font-style: italic;">3 LBS</span></td>
-				      		<td><form action="{% url 'fitness_app:addfood' %}" method="post">{% csrf_token %}<input id="tiefood" name="add" type="submit" value="Add"></form></td>
-				    	</tr>
-				  	</tbody>
-				</table>
-			</div>
-		</div>
-	    <div class="row">
-	    
-	    </div>
-	    <div class="row">
-	    	{% for food in yourfoods %}
-	    	<p>{{food.calories}}</p>
-	    	{% endfor %}
 	    </div>
 	</div>
 </body>
