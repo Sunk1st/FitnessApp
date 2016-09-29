@@ -45,15 +45,15 @@
 			    	</tr>
 			  	</thead>
 			  	<tbody>
-			  		{% for food in eaten %}
+			  		{% for food in foods %}
 			    	<tr>
 			      		<th scope="row">1</th>
 				      	<td>{{food.user.first_name}}</td>
-				      	<td>{{user.last_name}}</td>
-				      	<td>{{Apple}}</td>
-				      	<td>70</td>
-				      	<td>3</td>
-				      	<td>9:59 AM November 5, 2016</td>
+				      	<td>{{food.user.last_name}}</td>
+				      	<td>{{food.food}}</td>
+				      	<td>{{food.calories}}</td>
+				      	<td>{{food.protein}}</td>
+				      	<td>{{food.created_at}}</td>
 			    	</tr>
 			    	{% endfor %}
 			  	</tbody>

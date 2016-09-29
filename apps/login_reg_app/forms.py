@@ -13,8 +13,8 @@ class RegisterForm(forms.ModelForm):
 	feet = forms.ChoiceField(choices=[(x, x) for x in range(1,11)])
 	inches = forms.ChoiceField(choices=[(x, x) for x in range(1, 12)])
 	gender = forms.ChoiceField(widget=forms.Select, choices=(('Male', 'Male'), ('Female', 'Female')))
-	activity_level = forms.ChoiceField(widget=forms.Select, choices=(('1', 'Sedentary'), ('2', 'Low-Intensity'), ('3', 'Medium-Intensity'), ('4', 'High-Intensity'), ('5', 'Extreme-Intensity')))
-	goal = forms.ChoiceField(widget=forms.Select, choices=(('Lose 2 Pounds', 'Lose 2 Pounds'), ('Lose 1 Pound', 'Lose 1 Pound'), ('Maintain', 'Maintain'), ('Gain 1 Pound', 'Gain 1 Pound'), ('Gain 2 Pounds', 'Gain 2 Pounds')))
+	activity_level = forms.ChoiceField(widget=forms.Select, choices=(('1.2', 'Sedentary'), ('1.375', 'Low-Intensity'), ('1.55', 'Medium-Intensity'), ('1.725', 'High-Intensity'), ('1.9', 'Extreme-Intensity')))
+	goal = forms.ChoiceField(widget=forms.Select, choices=(('-1000', 'Lose 2 Pounds'), ('-500', 'Lose 1 Pound'), ('0', 'Maintain'), ('500', 'Gain 1 Pound'), ('1000', 'Gain 2 Pounds')))
 	password = forms.CharField(max_length = 100, widget = forms.PasswordInput)
 	password2 = forms.CharField(max_length = 100, widget = forms.PasswordInput, label="Confirm Password")
 
