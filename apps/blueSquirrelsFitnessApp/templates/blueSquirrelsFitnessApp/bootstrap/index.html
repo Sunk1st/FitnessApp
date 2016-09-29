@@ -80,7 +80,7 @@
         <div class="row">
             <div class=".col-md-6">
                 <h3>{{protsofar}} Grams of Protein Consumed Today</h3>
-                <h3>X Grams To Go</h3>
+                <h3>{{protleft}} Grams To Go</h3>
             </div>
             <div class=".col-md-6">
                 <div class="progress">
@@ -144,6 +144,7 @@
                             <td>{{food.calories}}</td>
                             <td>{{food.protein}}</td>
                             <td>{{food.created_at}}</td>
+                            <td><form action="{% url 'fitness_app:removefood' id=food.id %}" method="post">{% csrf_token %}<input type="submit" value="Remove"></form></td>
                         </tr>
                         {% endfor %}
                     </tbody>

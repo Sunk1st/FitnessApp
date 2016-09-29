@@ -37,7 +37,8 @@ def index(request):
 		'calleft' : request.session['dailycal'] - calsofar,
 		'calpercent' : calpercent,
 		'protsofar' : protsofar,
-		'protpercent' : protpercent
+		'protpercent' : protpercent,
+		'protleft' : float(user.weight) * 0.6 - float(protsofar)
 	}
 	return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
 
@@ -121,9 +122,18 @@ def community(request):
 	}
 	return render(request, 'blueSquirrelsFitnessApp/bootstrap/community.html', context)
 
-def food(request):
+def addfood(request):
+	name = request.POST['add']
+	name = name[4:len(name)]
+	response = unirest.get("https://nutritionix-api.p.mashape.com/v1_1/search/" + name + "?fields=item_name%2Cnf_calories%2Cnf_total_fat%2Cnf_protein%2Cnf_trans_fatty_acid%2Cnf_sugars%2Cnf_servings_per_container%2Cnf_total_carbohydrate", headers={"X-Mashape-Key" : "5P8MDOP5irmshHGpT0xH3s2UktVXp1zv2JEjsnpTCinqE6xXj2",
+		"Accept" : "application/json"})
+	fields = response.body['hits'][0]['fields']
+	Food.objects.create(food=fields['item_name'], calories=fields['nf_calories'], carbohydrates=fields['nf_total_carbohydrate'], lipids=fields['nf_total_fat'], protein=fields['nf_protein'], sugar=fields['nf_sugars'], user=User.objects.get(email=request.session['user']))
+	return redirect(reverse('fitness_app:index'))
 
-	return redirect(reverse('fitness_app:lifestyle'))
+def removefood(request, id):
+	id.delete()
+	return redirect(reverse('fitness_app:index'))
 
 def quickweight(request):
 	instance = User.objects.get(email=request.session['user'])
@@ -136,15 +146,6 @@ def quickweight(request):
 			'errors' : form.errors
 		}
 		return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
-
-def addfood(request):
-	name = request.POST['add']
-	name = name[4:len(name)]
-	response = unirest.get("https://nutritionix-api.p.mashape.com/v1_1/search/" + name + "?fields=item_name%2Cnf_calories%2Cnf_total_fat%2Cnf_protein%2Cnf_trans_fatty_acid%2Cnf_sugars%2Cnf_servings_per_container%2Cnf_total_carbohydrate", headers={"X-Mashape-Key" : "5P8MDOP5irmshHGpT0xH3s2UktVXp1zv2JEjsnpTCinqE6xXj2",
-		"Accept" : "application/json"})
-	fields = response.body['hits'][0]['fields']
-	Food.objects.create(food=fields['item_name'], calories=fields['nf_calories'], carbohydrates=fields['nf_total_carbohydrate'], lipids=fields['nf_total_fat'], protein=fields['nf_protein'], sugar=fields['nf_sugars'], user=User.objects.get(email=request.session['user']))
-	return redirect(reverse('fitness_app:index'))
 
 def quickactivity(request):
 	instance = User.objects.get(email=request.session['user'])
