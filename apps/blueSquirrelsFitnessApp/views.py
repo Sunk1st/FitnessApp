@@ -27,12 +27,16 @@ def index(request):
 	protsofar = 0
 	for food in eaten:
 		protsofar += food.protein
-	protpercent = (protsofar / request.session['dailycal']) * 100
+	protpercent = float(protsofar) / (float(user.weight) * 0.6) * 100
 	
 	context = {
 		'user' : user,
+		'userfoods' : Food.objects.filter(user=User.objects.get(email=request.session['user'])),
 		'daily' : request.session['dailycal'],
+		'calsofar' : calsofar,
+		'calleft' : request.session['dailycal'] - calsofar,
 		'calpercent' : calpercent,
+		'protsofar' : protsofar,
 		'protpercent' : protpercent
 	}
 	return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
@@ -48,22 +52,17 @@ def lifestyle(request):
 	elif (userData.gender == 'Female'):
 		bmr = 655.1 + (4.35 * int(userData.weight)) + (4.7 * (userData.feet * 12) + userData.inches) - (4.7 * userData.age)
 
-	sedentary = int(bmr * 1.2)
-	light = int(bmr * 1.375)
-	moderate = int(bmr * 1.55)
-	very = int(bmr * 1.725)
-	extreme = int(bmr * 1.9)
+	sedentary = int(bmr * 1.2) + userData.goal
+	light = int(bmr * 1.375) + userData.goal
+	moderate = int(bmr * 1.55) + userData.goal
+	very = int(bmr * 1.725) + userData.goal
+	extreme = int(bmr * 1.9) + userData.goal
 
 	loseTwo = int(bmr * float(userData.activity_level)) - 1000
 	loseOne = int(bmr * float(userData.activity_level)) - 500
 	maintain = int(bmr * float(userData.activity_level))
 	gainOne = int(bmr * float(userData.activity_level)) + 500
 	gainTwo = int(bmr * float(userData.activity_level)) + 1000
-
-	actlvl = 1
-	gl = 0
-
-	print userData.goal
 
 	if float(userData.activity_level) == 1.200:
 		actlvl = 'Sedentary'
@@ -81,7 +80,7 @@ def lifestyle(request):
 	elif float(userData.goal) == -500:
 		gl = 'Lose 2 Pound'
 	elif float(userData.goal) == 0:
-		gl = 'Maintain'
+		gl = 'Maintain Weight'
 	elif float(userData.goal) == 500:
 		gl = 'Gain 1 Pound'
 	elif float(userData.goal) == 1000:
@@ -145,7 +144,7 @@ def addfood(request):
 		"Accept" : "application/json"})
 	fields = response.body['hits'][0]['fields']
 	Food.objects.create(food=fields['item_name'], calories=fields['nf_calories'], carbohydrates=fields['nf_total_carbohydrate'], lipids=fields['nf_total_fat'], protein=fields['nf_protein'], sugar=fields['nf_sugars'], user=User.objects.get(email=request.session['user']))
-	return redirect(reverse('fitness_app:lifestyle'))
+	return redirect(reverse('fitness_app:index'))
 
 def quickactivity(request):
 	instance = User.objects.get(email=request.session['user'])

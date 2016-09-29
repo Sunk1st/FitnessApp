@@ -1,12 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load staticfiles %}
     <title>Home Page</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(document).on('click', function (){
+                $('#btnGetFood').click(function(){
+                    var food_name = $('#foodnameLabel');
+                    var serving_size = $('#servingsizeLabel');
+                    var calories = $('#caloriesLabel');
+                    var carbs = $('#carbsLabel');
+                    var fats = $('#fatsLabel');
+                    var protein = $('#proteinLabel');
+                    var sugar = $('#sugarsLabel');
+                    var tie = $('#tiefood');
+                    $.ajax({
+                        url: 'https://nutritionix-api.p.mashape.com/v1_1/search/' + $('#txtFood').val() + '?fields=item_name%2Cnf_calories%2Cnf_total_fat%2Cnf_protein%2Cnf_trans_fatty_acid%2Cnf_sugars%2Cnf_servings_per_container%2Cnf_total_carbohydrate',
+                        method: 'get',
+                        dataType: 'json',
+                        headers: { "X-Mashape-Key": "ZQdVejWpzXmshdaZtQfKzwtGzxytp1rSizcjsnb1bGwELdPAIB" },
+                        success: function (data){
+                            food_name.html(data.hits[0].fields.item_name);
+                            serving_size.html(data.hits[0].fields.nf_serving_size_qty);
+                            calories.html(data.hits[0].fields.nf_calories);
+                            carbs.html(data.hits[0].fields.nf_total_carbohydrate + " grams");
+                            fats.html(data.hits[0].fields.nf_total_fat + " grams");
+                            protein.html(data.hits[0].fields.nf_protein + " grams");
+                            sugar.html(data.hits[0].fields.nf_sugars + " grams");
+                            tie.val("Add " + $('#txtFood').val())
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -28,13 +62,13 @@
             </nav>
         </div>
         <div class = "row">
-            <h2>Welcome, {{user.created_at}}! Today you should eat {{daily}} calories! You have already eaten {{sofar}}!</h2>
+            <h2>Welcome, {{user.first_name}}! Today you should eat {{daily}} calories!</h2>
             <h1>{{errors}}</h1>
         </div>
         <div class="row">
             <div class=".col-md-6">
-                <h3>X Calories Consumed Today</h3>
-                <h3>X Calories To Go</h3>
+                <h3>{{calsofar}} Calories Consumed Today</h3>
+                <h3>{{calleft}} Calories To Go</h3>
             </div>
             <div class=".col-md-6">
                 <div class="progress">
@@ -43,18 +77,53 @@
                 </div>
             </div>
         </div>
-    <div class="row">
-        <div class=".col-md-6">
-            <h3>X Grams of Protein Consumed Today</h3>
-            <h3>X Grams To Go</h3>
-        </div>
-        <div class=".col-md-6">
-            <div class="progress">
-                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:{{protpercent}}%">
+        <div class="row">
+            <div class=".col-md-6">
+                <h3>{{protsofar}} Grams of Protein Consumed Today</h3>
+                <h3>X Grams To Go</h3>
+            </div>
+            <div class=".col-md-6">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:{{protpercent}}%">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <div id="row">
+            <div class="col-md-3">
+                <h4>Enter a Food Item</h4>
+                <input type="text" id="txtFood" name="foodname">
+                <input type="submit" id="btnGetFood" name="test" value="Get Food Data">
+            </div>
+            <div class="col-md-9">
+                <table class="table">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>Food</th>
+                            <th>Serving Size</th>
+                            <th>Calories</th>
+                            <th>Carbs</th>
+                            <th>Fats</th>
+                            <th>Protein</th>
+                            <th>Sugars</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row"><label id="foodnameLabel"><span style="font-style: italic;">Funnel Cake</span></label></th>
+                            <td id="servingsizeLabel"><span style="font-style: italic;">25 Servings</span></td>
+                            <td id="caloriesLabel"><span style="font-style: italic;">5000</td>
+                            <td id="carbsLabel"><span style="font-style: italic;">700 grams</span></td>
+                            <td id="fatsLabel"><span style="font-style: italic;">Obesity Level 1000</span></td>
+                            <td id="proteinLabel"><span style="font-style: italic;">500 g</span></td>
+                            <td id="sugarsLabel"><span style="font-style: italic;">3 LBS</span></td>
+                            <td><form action="{% url 'fitness_app:addfood' %}" method="post">{% csrf_token %}<input id="tiefood" name="add" type="submit" value="Add"></form></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <div id="row">
             <div class="col-md-12">
                 <table class="table table">
@@ -68,13 +137,15 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for food in userfoods %}
                         <tr>
                             <th scope="row">1</th>
-                            <td>Apple</td>
-                            <td>70</td>
-                            <td>2</td>
-                            <td>9:59 AM November 5, 2016</td>
+                            <td>{{food.food}}</td>
+                            <td>{{food.calories}}</td>
+                            <td>{{food.protein}}</td>
+                            <td>{{food.created_at}}</td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
