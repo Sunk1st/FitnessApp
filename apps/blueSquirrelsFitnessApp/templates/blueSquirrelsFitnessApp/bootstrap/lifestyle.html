@@ -89,11 +89,14 @@
 					</thead>
 				  	<tbody>
 				  		<tr>
-				    		<td>{{sedentary}}</td>
-				      		<td>{{light}}</td>
-				      		<td>{{moderate}}</td>
-				      		<td>{{very}}</td>
-				      		<td>{{extreme}}</td>
+				  			<form action = "", method='post'>
+					    		<td><input type="radio" name="activity" value="sedentary">{{sedentary}}</td>
+					      		<td><input type="radio" name="activity" value="light">{{light}}</td>
+					      		<td><input type="radio" name="activity" value="moderate">{{moderate}}</td>
+					      		<td><input type="radio" name="activity" value="very">{{very}}</td>
+					      		<td><input type="radio" name="activity" value="extreme">{{extreme}}</td>
+					      		<td><input type='submit' value="Activity Setting"></td>
+				      		</form>
 						</tr>
 				  	</tbody>
 				</table>
@@ -117,6 +120,7 @@
 					      		<td><input type="radio" name="goal" value="maintain">{{maintain}}</td>
 					      		<td><input type="radio" name="goal" value="gain1">{{gainOne}}</td>
 					      		<td><input type="radio" name="goal" value="gain2">{{gainTwo}}</td>
+					      		<td><input type="submit" value="Goal Setting"></td>
 				    		</form>
 						</tr>
 				  	</tbody>
