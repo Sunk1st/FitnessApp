@@ -72,8 +72,8 @@
   					<dt>Age</dt><dd>{{user.age}}</dd>
   					<dt>Weight</dt><dd>{{user.weight}} lbs</dd>
   					<dt>Gender</dt><dd>{{user.gender}}</dd>
-  					<dt>Activity Level</dt><dd>{{user.activity_level}}</dd>
-  					<dt>Goal</dt><dd>{{user.goal}}</dd>
+  					<dt>Activity Level</dt><dd>{{actlvl}}</dd>
+  					<dt>Goal</dt><dd>{{gl}}</dd>
   					<dt>BMR</dt><dd>{{bmr}}</dd>
 				</dl>
 				<form action="{% url 'fitness_app:quickweight' %}" method="post">
@@ -95,19 +95,18 @@
 				    	</tr>
 					</thead>
 				  	<tbody>
-				  		<tr>
-				  			<form action = "{% url 'fitness_app:quickactivity' %}", method='post'>		
-				    		<td>{{sedentary}} Cal</td>
-				      		<td>{{light}} Cal</td>
-				      		<td>{{moderate}} Cal</td>
-				      		<td>{{very}} Cal</td>
-				      		<td>{{extreme}} Cal</td>
+				  		<tr>		
+				    			<td>{{sedentary}} Cal</td>
+				      			<td>{{light}} Cal</td>
+				      			<td>{{moderate}} Cal</td>
+				      			<td>{{very}} Cal</td>
+				      			<td>{{extreme}} Cal</td>
 						</tr>
 						<tr>
-							
+							<form action = "{% url 'fitness_app:quickactivity' %}", method='post'>
 							{% csrf_token %}	
-							<td>{{quickactivity}}</td>
-							<td><input type='submit' value="Update (1-5)"></td>
+								<td>{{quickactivity}}</td>
+								<td><input type='submit' value="Update (1-5)"></td>
 							</form>
 						</tr>
 				  	</tbody>
@@ -124,9 +123,7 @@
 				    	</tr>
 					</thead>
 				  	<tbody>
-				  		<form action="{% url 'fitness_app:quickgoal' %}" method="post">
-					  		<tr>	
-				    			{% csrf_token %}
+					  		<tr>
 					    		<td>{{loseTwo}} Cal</td>
 					      		<td>{{loseOne}} Cal</td>
 					      		<td>{{maintain}} Cal</td>
@@ -134,10 +131,12 @@
 					      		<td>{{gainTwo}} Cal</td>
 							</tr>
 							<tr>
-								<td>{{quickgoal}}</td>
-								<td><input type='submit' value='Update Goal'></td>
+								<form action="{% url 'fitness_app:quickgoal' %}" method="post">
+									{% csrf_token %}
+									<td>{{quickgoal}}</td>
+									<td><input type='submit' value='Update Goal'></td>
+								</form>
 							</tr>
-						</form>
 				  	</tbody>
 				</table>
 		    </div>
