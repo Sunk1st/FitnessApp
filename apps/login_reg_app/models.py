@@ -23,6 +23,7 @@ class User(models.Model):
     inches = models.IntegerField()
     weight = models.DecimalField(max_digits=5, decimal_places=1)
     activity_level = models.IntegerField()
+    goal = models.CharField(default='Maintain', max_length=255)
     password = models.CharField(max_length=255)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)

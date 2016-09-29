@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib import messages
 from ..login_reg_app.models import User
 from .models import Food
-from .forms import QuickWeight
+from .forms import QuickWeight, QuickActivity, QuickGoal
 import unirest
 import json
 
@@ -16,6 +16,8 @@ def index(request):
 
 def lifestyle(request):
 	qwform = QuickWeight()
+	qaform = QuickActivity()
+	qgform = QuickGoal()
 	userData = User.objects.get(email=request.session['user'])
 	if (userData.gender == 'Male'):
 
@@ -69,6 +71,8 @@ def lifestyle(request):
 		'user' : User.objects.get(email=request.session['user']),
 		'yourfoods' : Food.objects.filter(user=User.objects.get(email=request.session['user'])),
 		'quickweight' : qwform,
+		'quickactivity' : qaform,
+		'quickgoal' : qgform,
 		'bmr' : bmr,
 		'sedentary' : sedentary,
 		'light' : light,
@@ -105,13 +109,12 @@ def quickweight(request):
 	form = QuickWeight(request.POST, instance=instance)
 	if form.is_valid():
 		form.save()
-		return redirect(reverse('fitness_app:index'))
+		return redirect(reverse('fitness_app:lifestyle'))
 	else:
 		context = {
 			'errors' : form.errors
 		}
 		return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
-
 
 def addfood(request):
 	name = request.POST['add']
@@ -120,4 +123,32 @@ def addfood(request):
 		"Accept" : "application/json"})
 	fields = response.body['hits'][0]['fields']
 	Food.objects.create(food=fields['item_name'], calories=fields['nf_calories'], carbohydrates=fields['nf_total_carbohydrate'], lipids=fields['nf_total_fat'], protein=fields['nf_protein'], sugar=fields['nf_sugars'], user=User.objects.get(email=request.session['user']))
+	return redirect(reverse('fitness_app:lifestyle'))
+
+def quickactivity(request):
+	instance = User.objects.get(email=request.session['user'])
+	form = QuickActivity(request.POST, instance=instance)
+	if form.is_valid():
+		form.save()
+		return redirect(reverse('fitness_app:lifestyle'))
+	else:
+		context = {
+			'errors' : form.errors
+		}
+		return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
+
+	return redirect(reverse('fitness_app:lifestyle'))
+
+def quickgoal(request):
+	instance = User.objects.get(email=request.session['user'])
+	form = QuickActivity(request.POST, instance=instance)
+	if form.is_valid():
+		form.save()
+		return redirect(reverse('fitness_app:lifestyle'))
+	else:
+		context = {
+			'errors' : form.errors
+		}
+		return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
+
 	return redirect(reverse('fitness_app:lifestyle'))

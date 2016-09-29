@@ -8,4 +8,6 @@ urlpatterns = [
     url(r'^community$', views.community, name='community'),
     url(r'^quickweight$', views.quickweight, name='quickweight'),
     url(r'^addfood$', views.addfood, name='addfood'),
+    url(r'^quickactivity$', views.quickactivity, name='quickactivity'),
+    url(r'^quickgoal$', views.quickgoal, name='quickgoal')
 ]
