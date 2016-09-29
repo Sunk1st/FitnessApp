@@ -50,9 +50,9 @@ def analysis(request):
 def community(request):
 	context = {
 		'user' : User.objects.get(email=request.session['user']),
-		'users' : User.objects.all().exclude(email=request.session['user'])
+		'foods' : Food.objects.all()
 	}
-	return render(request, 'blueSquirrelsFitnessApp/bootstrap/community.html')
+	return render(request, 'blueSquirrelsFitnessApp/bootstrap/community.html', context)
 
 def food(request):
 
