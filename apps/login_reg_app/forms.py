@@ -32,6 +32,8 @@ class LoginForm(forms.Form):
 	email = forms.EmailField()
 	password = forms.CharField(max_length = 100, widget = forms.PasswordInput)
 
+	#Add password length < 8
+
 	def checkMatch(self):
 		email = self.cleaned_data.get('email')
 		password = self.cleaned_data.get('password')

@@ -9,10 +9,6 @@ def validateName(name):
         if not a.isalpha():
             raise ValidationError('Your input, {}, must be alphabetic.'.format(name))
 
-def validatePass(password):
-    if len(password) < 8:
-        raise ValidationError('Password is too short!')
-
 class User(models.Model):
     first_name = models.CharField(max_length=255, validators = [validateName])
     last_name = models.CharField(max_length=255, validators = [validateName])

@@ -132,7 +132,7 @@ def addfood(request):
 	return redirect(reverse('fitness_app:index'))
 
 def removefood(request, id):
-	id.delete()
+	Food.objects.get(id=id).delete()
 	return redirect(reverse('fitness_app:index'))
 
 def quickweight(request):
