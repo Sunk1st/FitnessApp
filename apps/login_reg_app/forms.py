@@ -7,13 +7,14 @@ import bcrypt
 class RegisterForm(forms.ModelForm):
 	class Meta:
 		model = User
-		fields = ('first_name', 'last_name', 'email', 'password', 'password2', 'age', 'gender', 'weight', 'feet', 'inches', 'activity_level')
+		fields = ('first_name', 'last_name', 'email', 'password', 'password2', 'age', 'gender', 'weight', 'feet', 'inches', 'activity_level', 'goal')
 	age = forms.ChoiceField(choices=[(x, x) for x in range(1, 100)])
 	weight = forms.ChoiceField(choices=[(x, x) for x in range(50, 501)])
 	feet = forms.ChoiceField(choices=[(x, x) for x in range(1,11)])
 	inches = forms.ChoiceField(choices=[(x, x) for x in range(1, 12)])
 	gender = forms.ChoiceField(widget=forms.Select, choices=(('Male', 'Male'), ('Female', 'Female')))
-	activity_level = forms.ChoiceField(widget=forms.Select, choices=(('1', 'Sedentary'), ('2', 'Low-Intensity'), ('3', 'Medium-Intensity'), ('4', 'High-Intensity')))
+	activity_level = forms.ChoiceField(widget=forms.Select, choices=(('1', 'Sedentary'), ('2', 'Low-Intensity'), ('3', 'Medium-Intensity'), ('4', 'High-Intensity'), ('5', 'Extreme-Intensity')))
+	goal = forms.ChoiceField(widget=forms.Select, choices=(('Lose 2 Pounds', 'Lose 2 Pounds'), ('Lose 1 Pound', 'Lose 1 Pound'), ('Maintain', 'Maintain'), ('Gain 1 Pound', 'Gain 1 Pound'), ('Gain 2 Pounds', 'Gain 2 Pounds')))
 	password = forms.CharField(max_length = 100, widget = forms.PasswordInput)
 	password2 = forms.CharField(max_length = 100, widget = forms.PasswordInput, label="Confirm Password")
 
