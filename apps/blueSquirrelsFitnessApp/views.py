@@ -154,7 +154,7 @@ def analysis(request):
                'text': 'Calories in ' + ', '.join(names) + ' (from left to right)'},
            	'xAxis' : {
            		'title' : {
-           			'text' : 'Macronutrient'
+           			'text' : ''
            		}
            	}})
 
@@ -181,13 +181,67 @@ def analysis(request):
                'text': 'Protein in ' + ', '.join(names) + ' (from left to right)'},
            	'xAxis' : {
            		'title' : {
-           			'text' : 'Macronutrient'
+           			'text' : ''
+           		}
+           	}})
+
+	carbdata = DataPool(
+       series=
+        [{'options': {
+            'source': source},
+          'terms': [
+            'food',
+            'carbohydrates'
+            ]}])
+
+	carbcht = Chart(
+        datasource = carbdata, 
+        series_options = 
+          [{'options':{
+              'type': 'column',
+              'stacking': False},
+            'terms': {
+              'carbohydrates': ['carbohydrates'],
+              }}],
+        chart_options = 
+          	{'title': {
+               'text': 'Carbohydrates in ' + ', '.join(names) + ' (from left to right)'},
+           	'xAxis' : {
+           		'title' : {
+           			'text' : ''
+           		}
+           	}})
+
+	lipdata = DataPool(
+       series=
+        [{'options': {
+            'source': source},
+          'terms': [
+            'food',
+            'lipids'
+            ]}])
+
+	lipcht = Chart(
+        datasource = lipdata, 
+        series_options = 
+          [{'options':{
+              'type': 'column',
+              'stacking': False},
+            'terms': {
+              'lipids': ['lipids'],
+              }}],
+        chart_options = 
+          	{'title': {
+               'text': 'Lipids in ' + ', '.join(names) + ' (from left to right)'},
+           	'xAxis' : {
+           		'title' : {
+           			'text' : ''
            		}
            	}})
 
 	context = {
 		'user' : User.objects.get(email=request.session['user']),
-		'calchart' : calcht
+		'charts' : [calcht, protcht, carbcht, lipcht]
 	}
 	return render(request, 'blueSquirrelsFitnessApp/analysis.html', context)
 
