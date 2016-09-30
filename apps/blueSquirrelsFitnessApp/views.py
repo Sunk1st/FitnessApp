@@ -8,6 +8,7 @@ from .forms import QuickWeight, QuickActivity, QuickGoal, QuantForm
 import unirest
 import json
 import datetime
+from chartit import DataPool, Chart
 
 def index(request):
 	user = User.objects.get(email=request.session['user'])
@@ -18,7 +19,7 @@ def index(request):
 	request.session['dailycal'] = int(float(user.activity_level) * bmr + user.goal)
 
 	eaten = Food.objects.filter(created_at=datetime.datetime.now().strftime('%Y-%m-%d'), user=user)
-	
+
 	quantityforms = []
 	for food in eaten:
 		quantityforms.append((QuantForm(quantity=food.quantity), food.id))
@@ -117,8 +118,76 @@ def lifestyle(request):
 	return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
 
 def analysis(request):
+
+	source = []
+
+	if len(Food.objects.filter()) >= 1:
+		source = Food.objects.filter(user=User.objects.get(email=request.session['user']))
+
+	names = []
+
+	for a in Food.objects.filter(user=User.objects.get(email=request.session['user'])):
+		names.append(a.food)
+
+	names.reverse()
+
+	caldata = DataPool(
+       series=
+        [{'options': {
+            'source': source},
+          'terms': [
+            'food',
+            'calories'
+            ]}])
+
+	calcht = Chart(
+        datasource = caldata, 
+        series_options = 
+          [{'options':{
+              'type': 'column',
+              'stacking': False},
+            'terms': {
+              'calories': ['calories'],
+              }}],
+        chart_options = 
+          	{'title': {
+               'text': 'Calories in ' + ', '.join(names) + ' (from left to right)'},
+           	'xAxis' : {
+           		'title' : {
+           			'text' : 'Macronutrient'
+           		}
+           	}})
+
+	protdata = DataPool(
+       series=
+        [{'options': {
+            'source': source},
+          'terms': [
+            'food',
+            'protein'
+            ]}])
+
+	protcht = Chart(
+        datasource = protdata, 
+        series_options = 
+          [{'options':{
+              'type': 'column',
+              'stacking': False},
+            'terms': {
+              'protein': ['protein'],
+              }}],
+        chart_options = 
+          	{'title': {
+               'text': 'Protein in ' + ', '.join(names) + ' (from left to right)'},
+           	'xAxis' : {
+           		'title' : {
+           			'text' : 'Macronutrient'
+           		}
+           	}})
+
 	context = {
-		'user' : User.objects.get(email=request.session['user'])
+		'user' : User.objects.get(email=request.session['user']),
+		'calchart' : calcht
 	}
 	return render(request, 'blueSquirrelsFitnessApp/analysis.html', context)
 

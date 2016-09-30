@@ -29,7 +29,6 @@ class QuickActivity(forms.ModelForm):
 			self.fields['activity_level'].initial = 1.9
 	activity_level = forms.ChoiceField(widget=forms.Select(), choices=([('1.2', 'Sedentary'), ('1.375', 'Low-Intensity'), ('1.55', 'Medium-Intensity'), ('1.725', 'High-Intensity'), ('1.9', 'Extreme-Intensity')]))
 
-
 class QuickGoal(forms.ModelForm):
 	class Meta:
 		model = User

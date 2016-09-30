@@ -7,7 +7,9 @@
   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.bundle.js"></script>
+  	<script src="http://code.highcharts.com/highcharts.js"></script>
+  	{% load chartit %}
+  	{{ calchart|load_charts:"cals" }}
 </head>
 <body>
   	<div class="container">
@@ -40,35 +42,22 @@
 			  <!-- Wrapper for slides -->
 			 	<div class="carousel-inner" role="listbox">
 				    <div class="item active">
-				      	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.bundle.js">
-							var myData = new Array(['Jan', 2], ['Feb', 1], ['Mar', 3], ['Apr', 6], ['May', 8], ['Jun', 10], ['Jul', 9], ['Aug', 8], ['Sep', 5], ['Oct', 6], ['Nov', 2], ['Dec', 4]);
-							var colors = ['#FFCC00', '#FFFF00', '#CCFF00', '#99FF00', '#33FF00', '#00FF66', '#00FF99', '#00FFCC', '#FF0000', '#FF3300', '#FF6600', '#FF9900'];
-							var myChart = new JSChart('chartid', 'pie');
-							myChart.setDataArray(myData);
-							myChart.colorizePie(colors);
-							myChart.setPiePosition(308, 170);
-							myChart.setPieRadius(95);
-							myChart.setPieUnitsFontSize(8);
-							myChart.setPieUnitsColor('#474747');
-							myChart.setPieValuesColor('#474747');
-							myChart.setPieValuesOffset(-10);
-							myChart.setTitleColor('#fff');
-							myChart.setSize(616, 321);
-							myChart.setBackgroundImage('http://www.jeremynoeljohnson.com/wp-content/uploads/2014/06/crazy_cat_4.jpg');
-							myChart.draw();
-				      	</script>
+				    	<div id="cals">
+				    	</div>
+				    </div>
+				    <div class="item ">
+				    	<div id="prot">
+				    	</div>
 				    </div>
 
 				    <div class="item">
-				      	<img src="http://www.aspca.org/sites/default/files/cat-care_urine-marking_main-image.jpg" alt="Chania">
-				    </div>
-
-				    <div class="item">
-				      	<img src="http://www.jeremynoeljohnson.com/wp-content/uploads/2014/06/crazy_cat_4.jpg" alt="Flower">
+				      	<div class="carbs">
+				      	</div>
 				    </div>
 
 				     <div class="item">
-				      	<img src="https://pbs.twimg.com/media/Cf8-vKXVAAA5qRR.jpg" alt="Flower">
+				      	<div class="lips">
+				      	</div>
 				    </div>
 			  	</div>
 
