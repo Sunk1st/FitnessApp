@@ -39,7 +39,7 @@ def index(request):
 		'protsofar' : protsofar,
 		'protpercent' : protpercent
 	}
-	return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
+	return render(request, 'blueSquirrelsFitnessApp/index.html', context)
 
 def lifestyle(request):
 	qwform = QuickWeight()
@@ -106,20 +106,20 @@ def lifestyle(request):
 		'actlvl' : actlvl,
 		'gl' : gl
 	}
-	return render(request, 'blueSquirrelsFitnessApp/bootstrap/lifestyle.html', context)
+	return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
 
 def analysis(request):
 	context = {
 		'user' : User.objects.get(email=request.session['user'])
 	}
-	return render(request, 'blueSquirrelsFitnessApp/bootstrap/analysis.html', context)
+	return render(request, 'blueSquirrelsFitnessApp/analysis.html', context)
 
 def community(request):
 	context = {
 		'user' : User.objects.get(email=request.session['user']),
 		'foods' : Food.objects.all()
 	}
-	return render(request, 'blueSquirrelsFitnessApp/bootstrap/community.html', context)
+	return render(request, 'blueSquirrelsFitnessApp/community.html', context)
 
 def food(request):
 
@@ -135,7 +135,7 @@ def quickweight(request):
 		context = {
 			'errors' : form.errors
 		}
-		return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
+		return render(request, 'blueSquirrelsFitnessApp/index.html', context)
 
 def addfood(request):
 	name = request.POST['add']
@@ -156,7 +156,7 @@ def quickactivity(request):
 		context = {
 			'errors' : form.errors
 		}
-		return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
+		return render(request, 'blueSquirrelsFitnessApp/index.html', context)
 
 def quickgoal(request):
 	instance = User.objects.get(email=request.session['user'])
@@ -168,4 +168,4 @@ def quickgoal(request):
 		context = {
 			'errors' : form.errors
 		}
-		return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
+		return render(request, 'blueSquirrelsFitnessApp/index.html', context)
