@@ -128,7 +128,7 @@
                 <table class="table table">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>Quantity</th>
                             <th>Food</th>
                             <th>Calories</th>
                             <th>Protein(g)</th>
@@ -138,7 +138,11 @@
                     <tbody>
                         {% for food in eaten %}
                         <tr>
-                            <th scope="row">1</th>
+                            {% for form in forms %}
+                            {% if form.1 == food.id %}
+                            <td><form action="{% url 'fitness_app:changequant' id=food.id %}" method="post">{% csrf_token %}{{form.0.as_p}}</td></form>
+                            {% endif %}
+                            {% endfor %}
                             <td>{{food.food}}</td>
                             <td>{{food.calories}}</td>
                             <td>{{food.protein}}</td>

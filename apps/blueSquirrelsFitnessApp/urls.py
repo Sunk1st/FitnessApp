@@ -12,5 +12,6 @@ urlpatterns = [
     url(r'^removefoodcomm/(?P<id>\d+)$', views.removefoodcomm, name='removefoodcomm'),
     url(r'^quickweight$', views.quickweight, name='quickweight'),
     url(r'^quickactivity$', views.quickactivity, name='quickactivity'),
-    url(r'^quickgoal$', views.quickgoal, name='quickgoal')
+    url(r'^quickgoal$', views.quickgoal, name='quickgoal'),
+    url(r'^changequant/(?P<id>\d+)$', views.changequant, name='changequant')
 ]

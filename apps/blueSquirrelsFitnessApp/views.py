@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib import messages
 from ..login_reg_app.models import User
 from .models import Food
-from .forms import QuickWeight, QuickActivity, QuickGoal
+from .forms import QuickWeight, QuickActivity, QuickGoal, QuantForm
 import unirest
 import json
 import datetime
@@ -18,15 +18,19 @@ def index(request):
 	request.session['dailycal'] = int(float(user.activity_level) * bmr + user.goal)
 
 	eaten = Food.objects.filter(created_at=datetime.datetime.now().strftime('%Y-%m-%d'), user=user)
+	
+	quantityforms = []
+	for food in eaten:
+		quantityforms.append((QuantForm(quantity=food.quantity), food.id))
 
 	calsofar = 0
 	for food in eaten:
-		calsofar += food.calories
+		calsofar += float(food.calories) * float(food.quantity)
 	calpercent = (calsofar / request.session['dailycal']) * 100
 
 	protsofar = 0
 	for food in eaten:
-		protsofar += food.protein
+		protsofar += float(food.protein) * float(food.quantity)
 	protpercent = float(protsofar) / (float(user.weight) * 0.6) * 100
 	
 	context = {
@@ -39,7 +43,8 @@ def index(request):
 		'protsofar' : protsofar,
 		'protpercent' : protpercent,
 		'protleft' : float(user.weight) * 0.6 - float(protsofar),
-		'eaten' : eaten
+		'eaten' : eaten,
+		'forms' : quantityforms
 	}
 	return render(request, 'blueSquirrelsFitnessApp/index.html', context)
 
@@ -151,7 +156,7 @@ def quickweight(request):
 		context = {
 			'errors' : form.errors
 		}
-		return render(request, 'blueSquirrelsFitnessApp/index.html', context)
+		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
 
 def quickactivity(request):
 	instance = User.objects.get(email=request.session['user'])
@@ -163,7 +168,7 @@ def quickactivity(request):
 		context = {
 			'errors' : form.errors
 		}
-		return render(request, 'blueSquirrelsFitnessApp/index.html', context)
+		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
 
 def quickgoal(request):
 	instance = User.objects.get(email=request.session['user'])
@@ -175,4 +180,16 @@ def quickgoal(request):
 		context = {
 			'errors' : form.errors
 		}
-		return render(request, 'blueSquirrelsFitnessApp/index.html', context)
+		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
+
+def changequant(request, id):
+	instance = Food.objects.get(id=id)
+	form = QuantForm(request.POST, instance=instance, quantity=instance.quantity)
+	if form.is_valid():
+		form.save()
+		return redirect(reverse('fitness_app:index'))
+	else:
+		context = {
+			'errors' : form.errors
+		}
+		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html')
