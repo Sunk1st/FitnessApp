@@ -1,7 +1,9 @@
 * {
-  font-family: monospace;
+	font-family: Arial;
+	margin: auto;
+	padding: 0;
 }
 
 input {
-  display: block;
+	display: block;
 }

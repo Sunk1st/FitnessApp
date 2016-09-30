@@ -52,7 +52,6 @@
                     </div>
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="{% url 'fitness_app:index' %}">HOME</a></li>
-                        <li><a href="{% url 'fitness_app:index' %}">HOME</a></li>
                         <li><a href="{% url 'fitness_app:lifestyle' %}">LIFESTYLE</a></li>
                         <li><a href="{% url 'fitness_app:analysis' %}">ANALYSIS</a></li>
                         <li><a href="{% url 'fitness_app:community' %}">COMMUNITY</a></li>
@@ -61,16 +60,16 @@
                 </div>
             </nav>
         </div>
-        <div class = "row">
+        <div class ="row">
             <h2>Welcome, {{user.first_name}}! Today you should eat {{daily}} calories!</h2>
             <h1>{{errors}}</h1>
         </div>
         <div class="row">
-            <div class=".col-md-6">
+            <div >
                 <h3>{{calsofar}} Calories Consumed Today</h3>
                 <h3>{{calleft}} Calories To Go</h3>
             </div>
-            <div class=".col-md-6">
+            <div >
                 <div class="progress">
                     <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:{{calpercent}}%">
                     </div>
@@ -80,7 +79,7 @@
         <div class="row">
             <div class=".col-md-6">
                 <h3>{{protsofar}} Grams of Protein Consumed Today</h3>
-                <h3>X Grams To Go</h3>
+                <h3>{{protleft}} Grams To Go</h3>
             </div>
             <div class=".col-md-6">
                 <div class="progress">
@@ -129,7 +128,7 @@
                 <table class="table table">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>Quantity</th>
                             <th>Food</th>
                             <th>Calories</th>
                             <th>Protein(g)</th>
@@ -137,13 +136,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for food in userfoods %}
+                        {% for food in eaten %}
                         <tr>
-                            <th scope="row">1</th>
+                            {% for form in forms %}
+                            {% if form.1 == food.id %}
+                            <td><form action="{% url 'fitness_app:changequant' id=food.id %}" method="post">{% csrf_token %}{{form.0.as_p}}</td></form>
+                            {% endif %}
+                            {% endfor %}
                             <td>{{food.food}}</td>
                             <td>{{food.calories}}</td>
                             <td>{{food.protein}}</td>
                             <td>{{food.created_at}}</td>
+                            <td><form action="{% url 'fitness_app:removefood' id=food.id %}" method="post">{% csrf_token %}<input type="submit" value="Remove"></form></td>
                         </tr>
                         {% endfor %}
                     </tbody>

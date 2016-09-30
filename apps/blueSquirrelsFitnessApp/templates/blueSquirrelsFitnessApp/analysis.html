@@ -8,9 +8,9 @@
   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
-  	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.js"></script>
-  	<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+  	<script src="http://code.highcharts.com/highcharts.js"></script>
+  	{% load chartit %}
+  	{{ calchart|load_charts:"cals" }}
 </head>
 <body>
   	<div class="container">
@@ -24,7 +24,6 @@
 	            		<li class="active"><a href="{% url 'fitness_app:analysis' %}">ANALYSIS</a></li>
 			            <li><a href="{% url 'fitness_app:index' %}">HOME</a></li>
 			            <li><a href="{% url 'fitness_app:lifestyle' %}">LIFESTYLE</a></li>
-			            <li><a href="{% url 'fitness_app:analysis' %}">ANALYSIS</a></li>
 			            <li><a href="{% url 'fitness_app:community' %}">COMMUNITY</a></li>
 			            <li><a href="{% url 'login_app:logout' %}">LOG OUT</a></li>
 	          		</ul>
@@ -43,10 +42,23 @@
 
 			  <!-- Wrapper for slides -->
 			 	<div class="carousel-inner" role="listbox">
-				   
+				    <div class="item active">
+				    	<div id="cals">
+				    	</div>
+				    </div>
+				    <div class="item ">
+				    	<div id="prot">
+				    	</div>
+				    </div>
 
 				    <div class="item">
-				      	<img src="{% static 'img/cat1.jpeg' %}" alt="Chania">
+				      	<div class="carbs">
+				      	</div>
+				    </div>
+
+				     <div class="item">
+				      	<div class="lips">
+				      	</div>
 				    </div>
 			  	</div>
 			  <!-- Left and right controls -->

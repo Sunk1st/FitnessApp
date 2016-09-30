@@ -4,10 +4,11 @@ from django.urls import reverse
 from django.contrib import messages
 from ..login_reg_app.models import User
 from .models import Food
-from .forms import QuickWeight, QuickActivity, QuickGoal
+from .forms import QuickWeight, QuickActivity, QuickGoal, QuantForm
 import unirest
 import json
 import datetime
+from chartit import DataPool, Chart
 
 def index(request):
 	user = User.objects.get(email=request.session['user'])
@@ -17,35 +18,43 @@ def index(request):
 		bmr = 655.1 + (4.35 * int(user.weight)) + (4.7 * (user.feet * 12) + user.inches) - (4.7 * user.age)
 	request.session['dailycal'] = int(float(user.activity_level) * bmr + user.goal)
 
-	eaten = Food.objects.filter(created_at=datetime.datetime.now(), user=user)
+	eaten = Food.objects.filter(created_at=datetime.datetime.now().strftime('%Y-%m-%d'), user=user)
+
+	quantityforms = []
+	for food in eaten:
+		quantityforms.append((QuantForm(quantity=food.quantity), food.id))
 
 	calsofar = 0
 	for food in eaten:
-		calsofar += food.calories
+		calsofar += float(food.calories) * float(food.quantity)
 	calpercent = (calsofar / request.session['dailycal']) * 100
 
 	protsofar = 0
 	for food in eaten:
-		protsofar += food.protein
+		protsofar += float(food.protein) * float(food.quantity)
 	protpercent = float(protsofar) / (float(user.weight) * 0.6) * 100
 	
 	context = {
 		'user' : user,
-		'userfoods' : Food.objects.filter(user=User.objects.get(email=request.session['user'])),
+		'userfoods' : Food.objects.filter(user=user),
 		'daily' : request.session['dailycal'],
 		'calsofar' : calsofar,
 		'calleft' : request.session['dailycal'] - calsofar,
 		'calpercent' : calpercent,
 		'protsofar' : protsofar,
-		'protpercent' : protpercent
+		'protpercent' : protpercent,
+		'protleft' : float(user.weight) * 0.6 - float(protsofar),
+		'eaten' : eaten,
+		'forms' : quantityforms
 	}
 	return render(request, 'blueSquirrelsFitnessApp/index.html', context)
 
 def lifestyle(request):
-	qwform = QuickWeight()
-	qaform = QuickActivity()
-	qgform = QuickGoal()
 	userData = User.objects.get(email=request.session['user'])
+
+	qwform = QuickWeight()
+	qaform = QuickActivity(level=float(userData.activity_level))
+	qgform = QuickGoal(goal=userData.goal)
 
 	if (userData.gender == 'Male'):
 		bmr = 66.47 + (6.23 * int(userData.weight)) + (12.7 * ((userData.feet * 12) + userData.inches)) - (6.75 * userData.age)
@@ -78,7 +87,7 @@ def lifestyle(request):
 	if float(userData.goal) == -1000:
 		gl = 'Lose 2 Pounds'
 	elif float(userData.goal) == -500:
-		gl = 'Lose 2 Pound'
+		gl = 'Lose 1 Pound'
 	elif float(userData.goal) == 0:
 		gl = 'Maintain Weight'
 	elif float(userData.goal) == 500:
@@ -109,8 +118,76 @@ def lifestyle(request):
 	return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
 
 def analysis(request):
+
+	source = []
+
+	if len(Food.objects.filter()) >= 1:
+		source = Food.objects.filter(user=User.objects.get(email=request.session['user']))
+
+	names = []
+
+	for a in Food.objects.filter(user=User.objects.get(email=request.session['user'])):
+		names.append(a.food)
+
+	names.reverse()
+
+	caldata = DataPool(
+       series=
+        [{'options': {
+            'source': source},
+          'terms': [
+            'food',
+            'calories'
+            ]}])
+
+	calcht = Chart(
+        datasource = caldata, 
+        series_options = 
+          [{'options':{
+              'type': 'column',
+              'stacking': False},
+            'terms': {
+              'calories': ['calories'],
+              }}],
+        chart_options = 
+          	{'title': {
+               'text': 'Calories in ' + ', '.join(names) + ' (from left to right)'},
+           	'xAxis' : {
+           		'title' : {
+           			'text' : 'Macronutrient'
+           		}
+           	}})
+
+	protdata = DataPool(
+       series=
+        [{'options': {
+            'source': source},
+          'terms': [
+            'food',
+            'protein'
+            ]}])
+
+	protcht = Chart(
+        datasource = protdata, 
+        series_options = 
+          [{'options':{
+              'type': 'column',
+              'stacking': False},
+            'terms': {
+              'protein': ['protein'],
+              }}],
+        chart_options = 
+          	{'title': {
+               'text': 'Protein in ' + ', '.join(names) + ' (from left to right)'},
+           	'xAxis' : {
+           		'title' : {
+           			'text' : 'Macronutrient'
+           		}
+           	}})
+
 	context = {
-		'user' : User.objects.get(email=request.session['user'])
+		'user' : User.objects.get(email=request.session['user']),
+		'calchart' : calcht
 	}
 	return render(request, 'blueSquirrelsFitnessApp/analysis.html', context)
 
@@ -121,9 +198,22 @@ def community(request):
 	}
 	return render(request, 'blueSquirrelsFitnessApp/community.html', context)
 
-def food(request):
+def addfood(request):
+	name = request.POST['add']
+	name = name[4:len(name)]
+	response = unirest.get("https://nutritionix-api.p.mashape.com/v1_1/search/" + name + "?fields=item_name%2Cnf_calories%2Cnf_total_fat%2Cnf_protein%2Cnf_trans_fatty_acid%2Cnf_sugars%2Cnf_servings_per_container%2Cnf_total_carbohydrate", headers={"X-Mashape-Key" : "5P8MDOP5irmshHGpT0xH3s2UktVXp1zv2JEjsnpTCinqE6xXj2",
+		"Accept" : "application/json"})
+	fields = response.body['hits'][0]['fields']
+	Food.objects.create(food=fields['item_name'], calories=fields['nf_calories'], carbohydrates=fields['nf_total_carbohydrate'], lipids=fields['nf_total_fat'], protein=fields['nf_protein'], sugar=fields['nf_sugars'], user=User.objects.get(email=request.session['user']))
+	return redirect(reverse('fitness_app:index'))
 
-	return redirect(reverse('fitness_app:lifestyle'))
+def removefood(request, id):
+	Food.objects.get(id=id).delete()
+	return redirect(reverse('fitness_app:index'))
+
+def removefoodcomm(request, id):
+	Food.objects.get(id=id).delete()
+	return redirect(reverse('fitness_app:community'))
 
 def quickweight(request):
 	instance = User.objects.get(email=request.session['user'])
@@ -135,20 +225,12 @@ def quickweight(request):
 		context = {
 			'errors' : form.errors
 		}
-		return render(request, 'blueSquirrelsFitnessApp/index.html', context)
 
-def addfood(request):
-	name = request.POST['add']
-	name = name[4:len(name)]
-	response = unirest.get("https://nutritionix-api.p.mashape.com/v1_1/search/" + name + "?fields=item_name%2Cnf_calories%2Cnf_total_fat%2Cnf_protein%2Cnf_trans_fatty_acid%2Cnf_sugars%2Cnf_servings_per_container%2Cnf_total_carbohydrate", headers={"X-Mashape-Key" : "5P8MDOP5irmshHGpT0xH3s2UktVXp1zv2JEjsnpTCinqE6xXj2",
-		"Accept" : "application/json"})
-	fields = response.body['hits'][0]['fields']
-	Food.objects.create(food=fields['item_name'], calories=fields['nf_calories'], carbohydrates=fields['nf_total_carbohydrate'], lipids=fields['nf_total_fat'], protein=fields['nf_protein'], sugar=fields['nf_sugars'], user=User.objects.get(email=request.session['user']))
-	return redirect(reverse('fitness_app:index'))
+		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
 
 def quickactivity(request):
 	instance = User.objects.get(email=request.session['user'])
-	form = QuickActivity(request.POST, instance=instance)
+	form = QuickActivity(request.POST, instance=instance, level=instance.activity_level)
 	if form.is_valid():
 		form.save()
 		return redirect(reverse('fitness_app:lifestyle'))
@@ -156,11 +238,11 @@ def quickactivity(request):
 		context = {
 			'errors' : form.errors
 		}
-		return render(request, 'blueSquirrelsFitnessApp/index.html', context)
+		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
 
 def quickgoal(request):
 	instance = User.objects.get(email=request.session['user'])
-	form = QuickGoal(request.POST, instance=instance)
+	form = QuickGoal(request.POST, instance=instance, goal=instance.goal)
 	if form.is_valid():
 		form.save()
 		return redirect(reverse('fitness_app:lifestyle'))
@@ -168,4 +250,16 @@ def quickgoal(request):
 		context = {
 			'errors' : form.errors
 		}
-		return render(request, 'blueSquirrelsFitnessApp/index.html', context)
+		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
+
+def changequant(request, id):
+	instance = Food.objects.get(id=id)
+	form = QuantForm(request.POST, instance=instance, quantity=instance.quantity)
+	if form.is_valid():
+		form.save()
+		return redirect(reverse('fitness_app:index'))
+	else:
+		context = {
+			'errors' : form.errors
+		}
+		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html')

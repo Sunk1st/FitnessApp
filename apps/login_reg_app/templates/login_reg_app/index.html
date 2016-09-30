@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     {% load staticfiles %}
     <meta charset="utf-8">
     <title>Login Registration</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-  </head>
-  <body>
-    {% for user in users %}
-    <p>{{user.email}}</p>
-    {% endfor %}
-    <h2>Register</h2>
-    <form action="{% url 'login_app:register' %}" method='post'>
-      {% csrf_token %}
-      {{registerform.as_p}}
-      <input type="submit" value="Register">
-    </form>
-    <h2>Login</h2>
-    <form action="{% url 'login_app:login' %}" method='post'>
-      {% csrf_token %}
-      {{loginform.as_p}}
-      <input type="submit" value="Login">
-    </form>
-    {{errors}}
-  </body>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-3">
+                <h2>Register</h2>
+                <form action="{% url 'login_app:register' %}" method='post'>
+                    {% csrf_token %}
+                    {{registerform.as_p}}
+                    <input type="submit" value="Register">
+                </form>
+            </div>
+            <div class="col-md-3">
+                <h2>Login</h2>
+                <form action="{% url 'login_app:login' %}" method='post'>
+                    {% csrf_token %}
+                    {{loginform.as_p}}
+                    <input type="submit" value="Login">
+                </form>
+                {{errors}}
+            </div>
+        </div>
+    </div>
+</body>
 </html>
