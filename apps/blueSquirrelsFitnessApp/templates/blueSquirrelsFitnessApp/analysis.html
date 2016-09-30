@@ -21,7 +21,6 @@
 	            		<li class="active"><a href="{% url 'fitness_app:analysis' %}">ANALYSIS</a></li>
 			            <li><a href="{% url 'fitness_app:index' %}">HOME</a></li>
 			            <li><a href="{% url 'fitness_app:lifestyle' %}">LIFESTYLE</a></li>
-			            <li><a href="{% url 'fitness_app:analysis' %}">ANALYSIS</a></li>
 			            <li><a href="{% url 'fitness_app:community' %}">COMMUNITY</a></li>
 			            <li><a href="{% url 'login_app:logout' %}">LOG OUT</a></li>
 	          		</ul>
@@ -41,22 +40,22 @@
 			  <!-- Wrapper for slides -->
 			 	<div class="carousel-inner" role="listbox">
 				    <div class="item active">
-				      	<script type="text/javascript">
+				      	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.bundle.js">
 							var myData = new Array(['Jan', 2], ['Feb', 1], ['Mar', 3], ['Apr', 6], ['May', 8], ['Jun', 10], ['Jul', 9], ['Aug', 8], ['Sep', 5], ['Oct', 6], ['Nov', 2], ['Dec', 4]);
 							var colors = ['#FFCC00', '#FFFF00', '#CCFF00', '#99FF00', '#33FF00', '#00FF66', '#00FF99', '#00FFCC', '#FF0000', '#FF3300', '#FF6600', '#FF9900'];
 							var myChart = new JSChart('chartid', 'pie');
-								myChart.setDataArray(myData);
-									myChart.colorizePie(colors);
-									myChart.setPiePosition(308, 170);
-									myChart.setPieRadius(95);
-									myChart.setPieUnitsFontSize(8);
-									myChart.setPieUnitsColor('#474747');
-									myChart.setPieValuesColor('#474747');
-									myChart.setPieValuesOffset(-10);
-									myChart.setTitleColor('#fff');
-									myChart.setSize(616, 321);
-									myChart.setBackgroundImage('path/background.jpg');
-								myChart.draw();
+							myChart.setDataArray(myData);
+							myChart.colorizePie(colors);
+							myChart.setPiePosition(308, 170);
+							myChart.setPieRadius(95);
+							myChart.setPieUnitsFontSize(8);
+							myChart.setPieUnitsColor('#474747');
+							myChart.setPieValuesColor('#474747');
+							myChart.setPieValuesOffset(-10);
+							myChart.setTitleColor('#fff');
+							myChart.setSize(616, 321);
+							myChart.setBackgroundImage('http://www.jeremynoeljohnson.com/wp-content/uploads/2014/06/crazy_cat_4.jpg');
+							myChart.draw();
 				      	</script>
 				    </div>
 

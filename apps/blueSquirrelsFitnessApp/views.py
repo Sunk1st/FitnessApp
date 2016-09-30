@@ -17,7 +17,7 @@ def index(request):
 		bmr = 655.1 + (4.35 * int(user.weight)) + (4.7 * (user.feet * 12) + user.inches) - (4.7 * user.age)
 	request.session['dailycal'] = int(float(user.activity_level) * bmr + user.goal)
 
-	eaten = Food.objects.filter(created_at=datetime.datetime.now(), user=user)
+	eaten = Food.objects.filter(created_at=datetime.datetime.now().strftime('%Y-%m-%d'), user=user)
 
 	calsofar = 0
 	for food in eaten:
@@ -31,22 +31,24 @@ def index(request):
 	
 	context = {
 		'user' : user,
-		'userfoods' : Food.objects.filter(user=User.objects.get(email=request.session['user'])),
+		'userfoods' : Food.objects.filter(user=user),
 		'daily' : request.session['dailycal'],
 		'calsofar' : calsofar,
 		'calleft' : request.session['dailycal'] - calsofar,
 		'calpercent' : calpercent,
 		'protsofar' : protsofar,
 		'protpercent' : protpercent,
-		'protleft' : float(user.weight) * 0.6 - float(protsofar)
+		'protleft' : float(user.weight) * 0.6 - float(protsofar),
+		'eaten' : eaten
 	}
-	return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
+	return render(request, 'blueSquirrelsFitnessApp/index.html', context)
 
 def lifestyle(request):
-	qwform = QuickWeight()
-	qaform = QuickActivity()
-	qgform = QuickGoal()
 	userData = User.objects.get(email=request.session['user'])
+
+	qwform = QuickWeight()
+	qaform = QuickActivity(level=float(userData.activity_level))
+	qgform = QuickGoal(goal=userData.goal)
 
 	if (userData.gender == 'Male'):
 		bmr = 66.47 + (6.23 * int(userData.weight)) + (12.7 * ((userData.feet * 12) + userData.inches)) - (6.75 * userData.age)
@@ -79,7 +81,7 @@ def lifestyle(request):
 	if float(userData.goal) == -1000:
 		gl = 'Lose 2 Pounds'
 	elif float(userData.goal) == -500:
-		gl = 'Lose 2 Pound'
+		gl = 'Lose 1 Pound'
 	elif float(userData.goal) == 0:
 		gl = 'Maintain Weight'
 	elif float(userData.goal) == 500:
@@ -107,20 +109,20 @@ def lifestyle(request):
 		'actlvl' : actlvl,
 		'gl' : gl
 	}
-	return render(request, 'blueSquirrelsFitnessApp/bootstrap/lifestyle.html', context)
+	return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
 
 def analysis(request):
 	context = {
 		'user' : User.objects.get(email=request.session['user'])
 	}
-	return render(request, 'blueSquirrelsFitnessApp/bootstrap/analysis.html', context)
+	return render(request, 'blueSquirrelsFitnessApp/analysis.html', context)
 
 def community(request):
 	context = {
 		'user' : User.objects.get(email=request.session['user']),
 		'foods' : Food.objects.all()
 	}
-	return render(request, 'blueSquirrelsFitnessApp/bootstrap/community.html', context)
+	return render(request, 'blueSquirrelsFitnessApp/community.html', context)
 
 def addfood(request):
 	name = request.POST['add']
@@ -135,6 +137,10 @@ def removefood(request, id):
 	Food.objects.get(id=id).delete()
 	return redirect(reverse('fitness_app:index'))
 
+def removefoodcomm(request, id):
+	Food.objects.get(id=id).delete()
+	return redirect(reverse('fitness_app:community'))
+
 def quickweight(request):
 	instance = User.objects.get(email=request.session['user'])
 	form = QuickWeight(request.POST, instance=instance)
@@ -145,11 +151,11 @@ def quickweight(request):
 		context = {
 			'errors' : form.errors
 		}
-		return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
+		return render(request, 'blueSquirrelsFitnessApp/index.html', context)
 
 def quickactivity(request):
 	instance = User.objects.get(email=request.session['user'])
-	form = QuickActivity(request.POST, instance=instance)
+	form = QuickActivity(request.POST, instance=instance, level=instance.activity_level)
 	if form.is_valid():
 		form.save()
 		return redirect(reverse('fitness_app:lifestyle'))
@@ -157,11 +163,11 @@ def quickactivity(request):
 		context = {
 			'errors' : form.errors
 		}
-		return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
+		return render(request, 'blueSquirrelsFitnessApp/index.html', context)
 
 def quickgoal(request):
 	instance = User.objects.get(email=request.session['user'])
-	form = QuickGoal(request.POST, instance=instance)
+	form = QuickGoal(request.POST, instance=instance, goal=instance.goal)
 	if form.is_valid():
 		form.save()
 		return redirect(reverse('fitness_app:lifestyle'))
@@ -169,4 +175,4 @@ def quickgoal(request):
 		context = {
 			'errors' : form.errors
 		}
-		return render(request, 'blueSquirrelsFitnessApp/bootstrap/index.html', context)
+		return render(request, 'blueSquirrelsFitnessApp/index.html', context)

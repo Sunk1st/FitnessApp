@@ -52,7 +52,6 @@
                     </div>
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="{% url 'fitness_app:index' %}">HOME</a></li>
-                        <li><a href="{% url 'fitness_app:index' %}">HOME</a></li>
                         <li><a href="{% url 'fitness_app:lifestyle' %}">LIFESTYLE</a></li>
                         <li><a href="{% url 'fitness_app:analysis' %}">ANALYSIS</a></li>
                         <li><a href="{% url 'fitness_app:community' %}">COMMUNITY</a></li>
@@ -137,7 +136,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for food in userfoods %}
+                        {% for food in eaten %}
                         <tr>
                             <th scope="row">1</th>
                             <td>{{food.food}}</td>
