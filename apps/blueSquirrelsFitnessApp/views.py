@@ -1,28 +1,56 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.urls import reverse
 from django.contrib import messages
-from ..login_reg_app.models import User
 from .models import Food
 from .forms import QuickWeight, QuickActivity, QuickGoal, QuantForm
+from ..login_reg_app.models import User
+from chartit import DataPool, Chart
 import unirest
 import json
 import datetime
-from chartit import DataPool, Chart
+
+'''
+
+index is what displays the home page. This is the function that is called when the user first logs in.
+
+'''
 
 def index(request):
+	'''
+	The user that is logged in is set to a variable because it is used many times. It is better to store it into a variable rather than have to call the ORM query over and over again. This should save processing speed.
+	'''
+
 	user = User.objects.get(email=request.session['user'])
+
+	'''
+	Then the basal metabolic rate is determined.
+	'''
 	if (user.gender == 'Male'):
 		bmr = 66.47 + (6.23 * int(user.weight)) + (12.7 * ((user.feet * 12) + user.inches)) - (6.75 * user.age)
 	elif (user.gender == 'Female'):
 		bmr = 655.1 + (4.35 * int(user.weight)) + (4.7 * (user.feet * 12) + user.inches) - (4.7 * user.age)
+	'''
+	The daily calories is then determined. Therefore, this is displayed immediately upon login/registration.
+	'''
 	request.session['dailycal'] = int(float(user.activity_level) * bmr + user.goal)
 
+	'''
+	eaten is a queryset that gets all the food the logged in user has eaten today
+	'''
+
 	eaten = Food.objects.filter(created_at=datetime.datetime.now().strftime('%Y-%m-%d'), user=user)
+
+	'''
+	quantityforms is an array of tuples that have forms and ids. This is necessary to implement a QuantForm for each food. 
+	'''
 
 	quantityforms = []
 	for food in eaten:
 		quantityforms.append((QuantForm(quantity=food.quantity), food.id))
+
+	'''
+	the amount of calories and protein already consumed is determined by looping through eaten
+	'''
 
 	calsofar = 0
 	for food in eaten:
@@ -36,7 +64,6 @@ def index(request):
 	
 	context = {
 		'user' : user,
-		'userfoods' : Food.objects.filter(user=user),
 		'daily' : request.session['dailycal'],
 		'calsofar' : calsofar,
 		'calleft' : request.session['dailycal'] - calsofar,
@@ -50,54 +77,60 @@ def index(request):
 	return render(request, 'blueSquirrelsFitnessApp/index.html', context)
 
 def lifestyle(request):
-	userData = User.objects.get(email=request.session['user'])
+	'''
+	The user that is logged in is set to a variable because it is used many times. It is better to store it into a variable rather than have to call the ORM query over and over again. This should save processing speed.
+	'''
+	user = User.objects.get(email=request.session['user'])
+
+	'''
+	
+	'''
 
 	qwform = QuickWeight()
-	qaform = QuickActivity(level=float(userData.activity_level))
-	qgform = QuickGoal(goal=userData.goal)
+	qaform = QuickActivity(level=float(user.activity_level))
+	qgform = QuickGoal(goal=user.goal)
 
-	if (userData.gender == 'Male'):
-		bmr = 66.47 + (6.23 * int(userData.weight)) + (12.7 * ((userData.feet * 12) + userData.inches)) - (6.75 * userData.age)
-	elif (userData.gender == 'Female'):
-		bmr = 655.1 + (4.35 * int(userData.weight)) + (4.7 * (userData.feet * 12) + userData.inches) - (4.7 * userData.age)
+	if (user.gender == 'Male'):
+		bmr = 66.47 + (6.23 * int(user.weight)) + (12.7 * ((user.feet * 12) + user.inches)) - (6.75 * user.age)
+	elif (user.gender == 'Female'):
+		bmr = 655.1 + (4.35 * int(user.weight)) + (4.7 * (user.feet * 12) + user.inches) - (4.7 * user.age)
 
-	sedentary = int(bmr * 1.2) + userData.goal
-	light = int(bmr * 1.375) + userData.goal
-	moderate = int(bmr * 1.55) + userData.goal
-	very = int(bmr * 1.725) + userData.goal
-	extreme = int(bmr * 1.9) + userData.goal
+	sedentary = int(bmr * 1.2) + user.goal
+	light = int(bmr * 1.375) + user.goal
+	moderate = int(bmr * 1.55) + user.goal
+	very = int(bmr * 1.725) + user.goal
+	extreme = int(bmr * 1.9) + user.goal
 
-	loseTwo = int(bmr * float(userData.activity_level)) - 1000
-	loseOne = int(bmr * float(userData.activity_level)) - 500
-	maintain = int(bmr * float(userData.activity_level))
-	gainOne = int(bmr * float(userData.activity_level)) + 500
-	gainTwo = int(bmr * float(userData.activity_level)) + 1000
+	loseTwo = int(bmr * float(user.activity_level)) - 1000
+	loseOne = int(bmr * float(user.activity_level)) - 500
+	maintain = int(bmr * float(user.activity_level))
+	gainOne = int(bmr * float(user.activity_level)) + 500
+	gainTwo = int(bmr * float(user.activity_level)) + 1000
 
-	if float(userData.activity_level) == 1.200:
+	if float(user.activity_level) == 1.200:
 		actlvl = 'Sedentary'
-	elif float(userData.activity_level) == 1.375:
+	elif float(user.activity_level) == 1.375:
 		actlvl = 'Low-Intensity'
-	elif float(userData.activity_level) == 1.550:
+	elif float(user.activity_level) == 1.550:
 		actlvl = 'Medium-Intensity'
-	elif float(userData.activity_level) == 1.725:
+	elif float(user.activity_level) == 1.725:
 		actlvl = 'High-Intensity'
-	elif float(userData.activity_level) == 1.900:
+	elif float(user.activity_level) == 1.900:
 		actlvl = 'Extreme-Intensity'
 
-	if float(userData.goal) == -1000:
+	if float(user.goal) == -1000:
 		gl = 'Lose 2 Pounds'
-	elif float(userData.goal) == -500:
+	elif float(user.goal) == -500:
 		gl = 'Lose 1 Pound'
-	elif float(userData.goal) == 0:
+	elif float(user.goal) == 0:
 		gl = 'Maintain Weight'
-	elif float(userData.goal) == 500:
+	elif float(user.goal) == 500:
 		gl = 'Gain 1 Pound'
-	elif float(userData.goal) == 1000:
+	elif float(user.goal) == 1000:
 		gl = 'Gain 2 Pounds'
 
 	context = {
-		'user' : User.objects.get(email=request.session['user']),
-		'yourfoods' : Food.objects.filter(user=User.objects.get(email=request.session['user'])),
+		'user' : user,
 		'quickweight' : qwform,
 		'quickactivity' : qaform,
 		'quickgoal' : qgform,
@@ -115,6 +148,7 @@ def lifestyle(request):
 		'actlvl' : actlvl,
 		'gl' : gl
 	}
+
 	return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
 
 def analysis(request):
@@ -258,7 +292,49 @@ def addfood(request):
 	response = unirest.get("https://nutritionix-api.p.mashape.com/v1_1/search/" + name + "?fields=item_name%2Cnf_calories%2Cnf_total_fat%2Cnf_protein%2Cnf_trans_fatty_acid%2Cnf_sugars%2Cnf_servings_per_container%2Cnf_total_carbohydrate", headers={"X-Mashape-Key" : "5P8MDOP5irmshHGpT0xH3s2UktVXp1zv2JEjsnpTCinqE6xXj2",
 		"Accept" : "application/json"})
 	fields = response.body['hits'][0]['fields']
-	Food.objects.create(food=fields['item_name'], calories=fields['nf_calories'], carbohydrates=fields['nf_total_carbohydrate'], lipids=fields['nf_total_fat'], protein=fields['nf_protein'], sugar=fields['nf_sugars'], user=User.objects.get(email=request.session['user']))
+
+	carbs = fields['nf_total_carbohydrate']
+	prot = fields['nf_protein']
+	fats = fields['nf_total_fat']
+	sugar = fields['nf_sugars']
+	if not sugar:
+		sugar = 0
+	if not carbs:
+		carbs = 0
+	if not prot:
+		prot = 0
+	if not fats:
+		fats = 0
+
+	Food.objects.create(food=fields['item_name'], calories=fields['nf_calories'], carbohydrates=carbs, lipids=fats, protein=prot, sugar=sugar, user=User.objects.get(email=request.session['user']))
+	return redirect(reverse('fitness_app:index'))
+
+def quickweight(request):
+	instance = User.objects.get(email=request.session['user'])
+	form = QuickWeight(request.POST, instance=instance)
+	form.is_valid()
+	form.save()
+	return redirect(reverse('fitness_app:lifestyle'))
+
+def quickactivity(request):
+	instance = User.objects.get(email=request.session['user'])
+	form = QuickActivity(request.POST, instance=instance, level=instance.activity_level)
+	form.is_valid()
+	form.save()
+	return redirect(reverse('fitness_app:lifestyle'))
+
+def quickgoal(request):
+	instance = User.objects.get(email=request.session['user'])
+	form = QuickGoal(request.POST, instance=instance, goal=instance.goal)
+	form.is_valid()
+	form.save()
+	return redirect(reverse('fitness_app:lifestyle'))
+
+def changequant(request, id):
+	instance = Food.objects.get(id=id)
+	form = QuantForm(request.POST, instance=instance, quantity=instance.quantity)
+	form.is_valid()
+	form.save()
 	return redirect(reverse('fitness_app:index'))
 
 def removefood(request, id):
@@ -268,51 +344,3 @@ def removefood(request, id):
 def removefoodcomm(request, id):
 	Food.objects.get(id=id).delete()
 	return redirect(reverse('fitness_app:community'))
-
-def quickweight(request):
-	instance = User.objects.get(email=request.session['user'])
-	form = QuickWeight(request.POST, instance=instance)
-	if form.is_valid():
-		form.save()
-		return redirect(reverse('fitness_app:lifestyle'))
-	else:
-		context = {
-			'errors' : form.errors
-		}
-		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
-
-def quickactivity(request):
-	instance = User.objects.get(email=request.session['user'])
-	form = QuickActivity(request.POST, instance=instance, level=instance.activity_level)
-	if form.is_valid():
-		form.save()
-		return redirect(reverse('fitness_app:lifestyle'))
-	else:
-		context = {
-			'errors' : form.errors
-		}
-		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
-
-def quickgoal(request):
-	instance = User.objects.get(email=request.session['user'])
-	form = QuickGoal(request.POST, instance=instance, goal=instance.goal)
-	if form.is_valid():
-		form.save()
-		return redirect(reverse('fitness_app:lifestyle'))
-	else:
-		context = {
-			'errors' : form.errors
-		}
-		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
-
-def changequant(request, id):
-	instance = Food.objects.get(id=id)
-	form = QuantForm(request.POST, instance=instance, quantity=instance.quantity)
-	if form.is_valid():
-		form.save()
-		return redirect(reverse('fitness_app:index'))
-	else:
-		context = {
-			'errors' : form.errors
-		}
-		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html')
