@@ -312,9 +312,21 @@ def addfood(request):
 def quickweight(request):
 	instance = User.objects.get(email=request.session['user'])
 	form = QuickWeight(request.POST, instance=instance)
+<<<<<<< HEAD
 	form.is_valid()
 	form.save()
 	return redirect(reverse('fitness_app:lifestyle'))
+=======
+	if form.is_valid():
+		form.save()
+		return redirect(reverse('fitness_app:lifestyle'))
+	else:
+		context = {
+			'errors' : form.errors
+		}
+
+		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html', context)
+>>>>>>> 7146f7b0c9f7a9164f11ca5046c5b1354b193788
 
 def quickactivity(request):
 	instance = User.objects.get(email=request.session['user'])
@@ -333,6 +345,7 @@ def quickgoal(request):
 def changequant(request, id):
 	instance = Food.objects.get(id=id)
 	form = QuantForm(request.POST, instance=instance, quantity=instance.quantity)
+<<<<<<< HEAD
 	form.is_valid()
 	form.save()
 	return redirect(reverse('fitness_app:index'))
@@ -344,3 +357,13 @@ def removefood(request, id):
 def removefoodcomm(request, id):
 	Food.objects.get(id=id).delete()
 	return redirect(reverse('fitness_app:community'))
+=======
+	if form.is_valid():
+		form.save()
+		return redirect(reverse('fitness_app:index'))
+	else:
+		context = {
+			'errors' : form.errors
+		}
+		return render(request, 'blueSquirrelsFitnessApp/lifestyle.html')
+>>>>>>> 7146f7b0c9f7a9164f11ca5046c5b1354b193788
